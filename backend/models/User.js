@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema({
     type: String,
     minlength: [6, "Password must be at least of 6 characters"],
     required: [true, "Password is required"],
-    // (select : false) tells all the data of a user will be fetched except password(in this case)
+    // (select : false) -> all the data of a user will be fetched except password(in this case)
     select: false,
   },
   avatar: {

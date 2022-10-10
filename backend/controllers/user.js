@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const cloudinary = require("cloudinary");
 
 const getProfile = async (req, res) => {
   try {
@@ -103,9 +104,34 @@ const login = async (req, res) => {
   }
 };
 
+const uploadAvatar = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const cloud = await cloudinary.v2.uploader.upload(req.body.image);
+
+    user.avatar = {
+      public_id: cloud.public_id,
+      url: cloud.secure_url,
+    };
+
+    user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "avatar uploaded successfully!",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getProfile,
   getBoards,
   register,
   login,
+  uploadAvatar,
 };
