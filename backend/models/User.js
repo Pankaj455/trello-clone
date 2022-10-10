@@ -19,9 +19,10 @@ const userSchema = mongoose.Schema({
     // (select : false) tells all the data of a user will be fetched except password(in this case)
     select: false,
   },
-  //TODO:   avatar: {
-  //     url: String
-  //   },
+  avatar: {
+    public_id: String,
+    url: String,
+  },
   description: String,
   boards: [
     {
