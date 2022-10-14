@@ -2,14 +2,12 @@ import React, { useState } from 'react'
 import logo from '../../assets/updated-logo-bold.svg'
 import {
     FormControl,
-    FormLabel,
     FormErrorMessage,
-    FormHelperText,
     Input,
-    Box,
     Image,
     InputGroup,
     InputLeftElement,
+    Button,
     Icon
   } from '@chakra-ui/react'
 import { MdEmail, MdHttps } from 'react-icons/md'
@@ -17,6 +15,17 @@ import { MdEmail, MdHttps } from 'react-icons/md'
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [isEmailErr, setIsEmailErr] = useState(false)
+    const [isPassErr, setIsPassErr] = useState(false)
+
+    const handleSubmit = e => {
+        e.preventDefault()
+        if(password.trim().length < 6){
+            setIsPassErr(true)
+            return
+        }
+        console.log(e.target);
+    }
 
   return (
   <>
@@ -26,8 +35,8 @@ const Login = () => {
         src={logo}
         alt="Logo"
     />
-    <form onSubmit={(e)=>e.preventDefault()}>
-        <FormControl>
+    <form onSubmit={handleSubmit}>
+        <FormControl isInvalid={isEmailErr}>
             <InputGroup>
                 <InputLeftElement
                     pointerEvents='none'
@@ -37,11 +46,20 @@ const Login = () => {
                     size='md'
                     value={email}
                     placeholder='Email'
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={e => {
+                        if(e.target.value.trim() === '')    setIsEmailErr(true)
+                        else{
+                            if(isEmailErr)  setIsEmailErr(false)
+                        }
+                        setEmail(e.target.value)
+                    }}
                 />
             </InputGroup>
+            {
+                isEmailErr && <FormErrorMessage>Please enter your email</FormErrorMessage>
+            }
         </FormControl>
-        <FormControl mt={4}>
+        <FormControl mt={4} isInvalid={isPassErr}>
             <InputGroup>
                 <InputLeftElement
                     pointerEvents='none'
@@ -51,28 +69,33 @@ const Login = () => {
                     size='md'
                     value={password}
                     placeholder='Password'
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={e => {
+                        if(e.target.value.trim() === '')    setIsPassErr(true)
+                        else{
+                            if(isPassErr)  setIsPassErr(false)
+                        }
+                        setPassword(e.target.value)
+                    }}
                 />
             </InputGroup>
+            {
+                isPassErr && <FormErrorMessage>
+                    {
+                        password === '' ? "Please enter your password"
+                        : "Password must have atleast 6 characters without any whitespace"
+                    }
+                </FormErrorMessage>
+            }
         </FormControl>
-        <Box
-            as='button'
-            p={2.5}
-            mt={6}
+        <Button
+            size='md'
+            colorScheme="blue"
+            mt={5}
             width="100%"
-            border='1px'
-            borderRadius='6px'
-            fontSize='16px'
-            fontWeight='semibold'
-            bg='#3182ce'
-            color='#fff'
-            _hover={{ bg: '#2b6cb0' }}
-            _active={{
-            bg: '#2c5282'
-            }}
+            type="submit"
         >
             Log In
-        </Box>
+        </Button>
     </form>
   </>
   )
