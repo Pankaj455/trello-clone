@@ -9,6 +9,7 @@ const GlobalStyle = createGlobalStyle`
 
     body{
         min-height: 100vh;
+        overflow-x: hidden;
     }
 
     img{
@@ -18,6 +19,13 @@ const GlobalStyle = createGlobalStyle`
 
     h1{
         font-size: 1.8rem;
+    }
+
+    section{
+        width: 100vw;
+        min-height: calc(100vh - 70px);
+        background: #F8F9FD;
+        padding: 2em 1.5em;
     }
 `;
 

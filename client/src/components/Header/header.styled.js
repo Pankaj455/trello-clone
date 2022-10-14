@@ -4,7 +4,8 @@ export const StyledHeader = styled.header`
   display: flex;
   align-items: center;
   //   border: 1px solid black;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
   padding: 1em 1.5em;
   .logo {
     width: 8rem;
