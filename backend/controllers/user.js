@@ -3,7 +3,14 @@ const cloudinary = require("cloudinary");
 
 const getProfile = async (req, res) => {
   try {
-    const user = await User.findOne({ _id: req.user._id });
+    const user = await User.findOne({ _id: req.user._id }).populate({
+      path: "boards",
+      populate: {
+        path: "members",
+        model: "User",
+        select: "name",
+      },
+    });
     res.status(200).json({
       user,
     });

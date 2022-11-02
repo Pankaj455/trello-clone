@@ -13,7 +13,7 @@ router.get("/me/", isAuthenticated, getProfile);
 
 router.post("/upload/avatar", isAuthenticated, uploadAvatar);
 
-router.get("/boards/", isAuthenticated, getBoards);
+// router.get("/boards/", isAuthenticated, getBoards);
 
 router.post("/register/", register);
 
