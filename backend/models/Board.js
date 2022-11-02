@@ -5,6 +5,10 @@ const boardSchema = mongoose.Schema({
     type: String,
     required: [true, "Title is required"],
   },
+  cover: {
+    public_id: String,
+    url: String,
+  },
   description: String,
   admin: {
     type: mongoose.Schema.Types.ObjectId,
