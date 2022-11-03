@@ -8,9 +8,14 @@ import {
     Image,
     InputGroup,
     InputLeftElement,
-    Icon
+    InputRightElement,
+    Icon,
+    useToast
   } from '@chakra-ui/react'
 import { MdEmail, MdHttps, MdPermIdentity } from 'react-icons/md'
+import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai'
+import axios from '../../axios'
+import { useNavigate } from 'react-router-dom'
 
 const SignUp = () => {
   const [name, setName] = useState('')
@@ -19,10 +24,14 @@ const SignUp = () => {
   const [emailErr, setEmailErr] = useState(false)
   const [password, setPassword] = useState('')
   const [passErr, setPassErr] = useState(false)
-  const [confirmPass, setConfirmPass] = useState('')
-  const [confirmPassErr, setConfirmPassErr] = useState(false)
+  const [show, setShow] = useState(false)
+  const [loading, setLoading] = useState(false)
+  
+  const navigate = useNavigate()
+  const toast = useToast()
+  const toastId = 'toastid'
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if(nameErr || name.trim().length < 3){
       if(!nameErr) setNameErr(true)
@@ -34,11 +43,36 @@ const SignUp = () => {
     else if(passErr || password.trim().length < 6){
       if(!passErr)  setPassErr(true)
       return;
-    }else if(confirmPass !== password){
-      setConfirmPassErr(true)
-      return;
     }
 
+    const user = {
+      name,
+      email,
+      password
+    }
+    setLoading(true)
+    try {
+        const {data} = await axios.post('/user/register', user)
+        toast({
+          position: 'top',
+          description: 'Account created successfully',
+          status: 'success',
+          duration: 3000
+        })
+        localStorage.setItem('auth-token', data.token)
+        navigate('/boards')
+
+    } catch (error) {
+        if(!toast.isActive(toastId))
+            toast({
+                id: toastId,
+                position: 'top',
+                description: error.response.data.message,
+                status: 'error',
+                duration: 2000
+            })
+    }
+    setLoading(false)    
   }
 
   return (
@@ -114,6 +148,7 @@ const SignUp = () => {
           />
           <Input
             size='md'
+            type={show ? "text" : "password"}
             value={password}
             placeholder='Password'
             onChange={e => {
@@ -122,7 +157,17 @@ const SignUp = () => {
                   if(passErr)  setPassErr(false)
               }
               setPassword(e.target.value)
-          }}
+            }}
+          />
+          <InputRightElement
+            children={
+                <Icon 
+                    as={show ? AiFillEye : AiFillEyeInvisible} 
+                    onClick={() => setShow(!show)}
+                    color='blackAlpha.500'
+                    cursor='pointer'
+                />
+            }
           />
         </InputGroup>
         {
@@ -134,37 +179,13 @@ const SignUp = () => {
           </FormErrorMessage>
         }
       </FormControl>
-      <FormControl mt={4} isInvalid={confirmPassErr}>
-        <InputGroup>
-          <InputLeftElement
-              pointerEvents='none'
-              children={<Icon as={MdHttps} color='blackAlpha.500' />}
-          />
-          <Input
-            size='md'
-            value={confirmPass}
-            placeholder='Confirm Password'
-            onChange={e => {
-              if(confirmPassErr)  setConfirmPassErr(false)
-              setConfirmPass(e.target.value)
-            }}
-          />
-        </InputGroup>
-        {
-          confirmPassErr && <FormErrorMessage>
-          {
-              confirmPass === '' ? "Please enter password again"
-              : "Password did not match"
-          }
-        </FormErrorMessage>
-        }
-      </FormControl>
       <Button
             size='md'
             colorScheme="green"
             mt={5}
             width="100%"
             type="submit"
+            disabled={loading}
         >
             Sign Up
         </Button>

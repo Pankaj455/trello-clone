@@ -8,12 +8,17 @@ import { Image,
 } from '@chakra-ui/react'
 import { MdHttps, MdImage, MdPermIdentity } from 'react-icons/md'
 import { AiOutlinePlus } from 'react-icons/ai'
+import axios from '../../axios'
+import { useAppContext } from '../../context/AppProvider'
 
 const Modal = ({isOpen, close}) => {
+    const {createBoard} = useAppContext()
+
     const [title, setTitle] = useState('')
     const [visibility, setVisibility] = useState(false)
     const [cover, setCover] = useState(null)
     const [isError, setIsError] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const imgRef = useRef()
 
     useEffect(() => {
@@ -42,8 +47,8 @@ const Modal = ({isOpen, close}) => {
             reader.readAsDataURL(image)
         }
     }
-
-    const handleSubmit = e => {
+    
+    const handleSubmit = async (e) => {
         e.preventDefault()
         if(title === ''){
             if(!isError) setIsError(true)
@@ -55,10 +60,25 @@ const Modal = ({isOpen, close}) => {
             visibility,
             cover
         }
+        setIsLoading(true)
+        try {
+            const {data} = await axios.post('/board/create',
+                    newBoard,
+                    { headers: {
+                        token: localStorage.getItem('auth-token')
+                    },
+                })
 
-        console.log(newBoard);
+            createBoard(data.board)
+        } catch (error) {
+            console.log('Error: ', error);
+            setIsLoading(false)
+        }
+
+        setIsLoading(false)
         close(false)
     }
+
   return (
     <StyledModal display={isOpen.toString()}>
         <div className="form-modal">
@@ -105,7 +125,9 @@ const Modal = ({isOpen, close}) => {
                 <div className="footer">
                     <Button size='sm' color='#828282' onClick={() => close(false)}>Cancel</Button>
                     <Button
-                        size='sm' 
+                        isLoading={isLoading}
+                        loadingText="Creating"
+                        size='sm'
                         leftIcon={<AiOutlinePlus />}
                         type='submit'
                     >

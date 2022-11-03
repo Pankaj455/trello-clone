@@ -21,5 +21,6 @@ export const StyledHeader = styled.header`
   .profile {
     display: flex;
     align-items: center;
+    margin-left: auto;
   }
 `;

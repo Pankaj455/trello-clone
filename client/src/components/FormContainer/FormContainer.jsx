@@ -1,10 +1,19 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { Container } from '@chakra-ui/react'
 import { Tabs, TabList, TabPanels, Tab, TabPanel, Text } from '@chakra-ui/react'
 import Login from '../Login/Login'
 import SignUp from '../SignUp/SignUp'
+import { useNavigate } from 'react-router-dom'
+
 
 const FormContainer = () => {
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if(localStorage.getItem('auth-token')){
+            navigate('/boards')
+        }
+    }, [navigate])
   return (
     <Container
         maxW='450px'

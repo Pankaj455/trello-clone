@@ -7,6 +7,7 @@ import FormContainer from "./components/FormContainer/FormContainer";
 import GlobalStyle from "./GlobalStyle";
 import AllBoards from "./components/AllBoards/AllBoards";
 import ProtectedRoutes from "./ProtectedRoutes";
+import MyProfile from "./components/MyProfile/MyProfile";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           </Route>
           <Route element={<ProtectedRoutes />}>
             <Route path="/boards" element={<AllBoards />} />
+            <Route path="/me" element={<MyProfile />} />
           </Route>
         </Routes>
       </BrowserRouter>

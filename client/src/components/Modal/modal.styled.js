@@ -7,11 +7,10 @@ export const StyledModal = styled.div`
   left: 0;
   bottom: 0;
   right: 0;
-  width: 100vw;
   height: 100vh;
+  width: 100vw;
   background: rgba(0, 0, 0, 0.5);
   z-index: 1;
-  transition: all 2s;
 
   .form-modal {
     position: absolute;
@@ -22,16 +21,18 @@ export const StyledModal = styled.div`
     top: 50%;
     left: 50%;
     translate: -50% -50%;
-    transform: transform(-50%, -50%);
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
     border-radius: 8px;
     padding: 1.8em;
+    transition: transform 1.5s;
 
     .cover {
       height: 78px;
       position: relative;
       margin-bottom: 16px;
-      // border: 1px solid #828282;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       background: rgb(201, 217, 208);
       background: linear-gradient(
         90deg,

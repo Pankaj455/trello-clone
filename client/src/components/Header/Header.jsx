@@ -11,41 +11,60 @@ import {
 } from '@chakra-ui/react'
 import { CgMenuGridR } from "react-icons/cg";
 import { BsCaretDownFill } from "react-icons/bs";
+import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../../context/AppProvider';
 
-const Header = () => {
+const Header = ({name, avatar}) => {
+    const navigate = useNavigate()
+    const {clearUser} = useAppContext()
+
+    const logout = () => {
+        localStorage.removeItem('auth-token')
+        clearUser()
+        navigate('/auth')
+    }
+
+    const myProfile = () => {
+        navigate('/me')
+    }
   return (
     <StyledHeader>
         <img src={logo} alt="Crello Logo" className='logo' />
-        <div className="board">
-            <h1>DevChallenges Board | </h1>
-            <Button 
-                leftIcon={<CgMenuGridR />} 
-                size='sm'
-                ml={3}
-                color="#828282"
-            >
-                All board
-            </Button>
-        </div>
+        {
+            !window.location.pathname.includes('/boards') &&
+            <div className="board">
+                <h1>DevChallenges Board | </h1>
+                <Button 
+                    leftIcon={<CgMenuGridR />} 
+                    size='sm'
+                    ml={3}
+                    color="#828282"
+                >
+                    All board
+                </Button>
+            </div>
+        }
         <div className="profile">
-            <Avatar 
-                size='sm'
-                name='Pankaj Das'
-                src='https://bit.ly/dan-abramov'
-            />
+            {
+                <Avatar 
+                    size='sm'
+                    name={name}
+                    // src='https://bit.ly/dan-abramov'
+                    src={avatar ? avatar.url : ''}
+                />
+            }
             <Menu>
                 <MenuButton 
                     as={Button} 
                     size='sm'
                     bg='#fff'
-                    
                     rightIcon={<BsCaretDownFill />}
                 >
-                    Pankaj Das
+                    {name}
                 </MenuButton>
                 <MenuList>
-                    <MenuItem>My profile</MenuItem>
-                    <MenuItem>Log out</MenuItem>
+                    <MenuItem onClick={myProfile}>My profile</MenuItem>
+                    <MenuItem onClick={logout}>Log out</MenuItem>
                 </MenuList>
             </Menu>
         </div>
