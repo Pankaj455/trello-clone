@@ -1,14 +1,26 @@
 const Board = require("../models/Board");
 const User = require("../models/User");
+const cloudinary = require("cloudinary");
 
 const createBoard = async (req, res) => {
   try {
-    const { title, visibility } = req.body;
+    const { title, visibility, cover } = req.body;
     const newBoardData = {
       title,
       visibility: visibility === false ? false : true,
       admin: req.user._id,
     };
+
+    if (cover) {
+      const cloud = await cloudinary.v2.uploader.upload(cover, {
+        folder: "covers",
+      });
+
+      newBoardData.cover = {
+        public_id: cloud.public_id,
+        url: cloud.secure_url,
+      };
+    }
 
     const newBoard = await Board.create(newBoardData);
     const user = await User.findById(req.user._id);

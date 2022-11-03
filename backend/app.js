@@ -7,7 +7,7 @@ const list = require("./routes/list");
 const user = require("./routes/user");
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "10mb", extended: true }));
 
 app.use("/api/v1/board", board);
 app.use("/api/v1/board", list);
