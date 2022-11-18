@@ -17,6 +17,11 @@ export const StyledHeader = styled.header`
     flex-grow: 1;
     margin-left: 4em;
     align-items: center;
+
+    h1 {
+      font-size: 18px;
+      font-weight: 500;
+    }
   }
   .profile {
     display: flex;

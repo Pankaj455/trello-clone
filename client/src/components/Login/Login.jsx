@@ -16,8 +16,10 @@ import { MdEmail, MdHttps } from 'react-icons/md'
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai'
 import axios from '../../axios'
 import { useNavigate } from 'react-router-dom'
+import { useAppContext } from '../../context/AppProvider'
 
 const Login = () => {
+    const {loadUser} = useAppContext()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isEmailErr, setIsEmailErr] = useState(false)
@@ -48,9 +50,11 @@ const Login = () => {
         try {
             const {data} = await axios.post('/user/login', user)
             localStorage.setItem('auth-token', data.token)
+            loadUser()
             navigate('/boards')
 
         } catch (error) {
+            console.log(error);
             if(!toast.isActive(toastId))
                 toast({
                     id: toastId,
@@ -60,7 +64,9 @@ const Login = () => {
                     duration: 2000
                 })
         }
-        setLoading(false)
+        finally{
+            setLoading(false)
+        }
     }
     
 

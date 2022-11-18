@@ -6,7 +6,7 @@ import { Image,
     Input,
     Button
 } from '@chakra-ui/react'
-import { MdHttps, MdImage, MdPermIdentity } from 'react-icons/md'
+import { MdHttps, MdImage, MdPublic } from 'react-icons/md'
 import { AiOutlinePlus } from 'react-icons/ai'
 import axios from '../../axios'
 import { useAppContext } from '../../context/AppProvider'
@@ -39,6 +39,7 @@ const Modal = ({isOpen, close}) => {
 
     const handleImageUpload = e => {
         const image = e.target.files[0]
+        // console.log(image);
         if(image && image.type.substr(0, 5) === 'image'){
             const reader = new FileReader()
             reader.onloadend = function () {
@@ -48,6 +49,12 @@ const Modal = ({isOpen, close}) => {
         }
     }
     
+    const handleClose = () => {
+        imgRef.current.value = null
+        setCover(null)
+        close(false)
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         if(title === ''){
@@ -72,11 +79,16 @@ const Modal = ({isOpen, close}) => {
             createBoard(data.board)
         } catch (error) {
             console.log('Error: ', error);
+        }
+        finally{
+            setTitle('')
+            setCover(null)
+            setVisibility(false)
             setIsLoading(false)
+            imgRef.current.value = null
+            close(false)
         }
 
-        setIsLoading(false)
-        close(false)
     }
 
   return (
@@ -108,14 +120,14 @@ const Modal = ({isOpen, close}) => {
                         onChange={handleImageUpload}
                     />
                     <Button 
-                        leftIcon={<MdImage />} 
+                        leftIcon={<MdImage />}
                         size="sm" 
                         onClick={()=> imgRef.current.click()}
                     >
                         Cover
                     </Button>
                     <Button 
-                        leftIcon={!visibility ? <MdHttps /> : <MdPermIdentity />} 
+                        leftIcon={!visibility ? <MdHttps /> : <MdPublic />} 
                         size="sm"
                         onClick={() => setVisibility(!visibility)}
                     >
@@ -123,7 +135,7 @@ const Modal = ({isOpen, close}) => {
                     </Button>
                 </div>
                 <div className="footer">
-                    <Button size='sm' color='#828282' onClick={() => close(false)}>Cancel</Button>
+                    <Button size='sm' color='#828282' onClick={handleClose}>Cancel</Button>
                     <Button
                         isLoading={isLoading}
                         loadingText="Creating"

@@ -1,10 +1,12 @@
 import React from 'react'
 import { StyledCard } from './card.styled.'
 import { Image, AvatarGroup, Avatar } from '@chakra-ui/react'
+import { useNavigate } from 'react-router-dom'
 
 const Card = ({board}) => {
+  const navigate = useNavigate()
   return (
-    <StyledCard>
+    <StyledCard onClick={() => navigate(`/boards/${board._id}`, {state: board._id})}>
       <div className="cover">
         {
           board.cover && <Image src={board.cover.url} fit alt='board-cover' />

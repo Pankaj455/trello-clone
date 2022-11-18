@@ -16,8 +16,11 @@ import { MdEmail, MdHttps, MdPermIdentity } from 'react-icons/md'
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai'
 import axios from '../../axios'
 import { useNavigate } from 'react-router-dom'
+import { useAppContext } from '../../context/AppProvider'
 
 const SignUp = () => {
+  const {loadUser} = useAppContext()
+
   const [name, setName] = useState('')
   const [nameErr, setNameErr] = useState(false)
   const [email, setEmail] = useState('')
@@ -60,6 +63,7 @@ const SignUp = () => {
           duration: 3000
         })
         localStorage.setItem('auth-token', data.token)
+        loadUser()
         navigate('/boards')
 
     } catch (error) {

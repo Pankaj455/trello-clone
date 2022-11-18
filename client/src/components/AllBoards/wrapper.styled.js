@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
-  //   border: 2px solid black;
   padding: 2em 5em;
   max-width: 1200px;
   margin: 0 auto;
+  background-color: #f8f9fd;
 
   .row {
     display: flex;

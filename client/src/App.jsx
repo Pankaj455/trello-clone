@@ -8,22 +8,27 @@ import GlobalStyle from "./GlobalStyle";
 import AllBoards from "./components/AllBoards/AllBoards";
 import ProtectedRoutes from "./ProtectedRoutes";
 import MyProfile from "./components/MyProfile/MyProfile";
+import Board from "./components/Board/Board";
+import AppProvider from "./context/AppProvider";
 
 function App() {
   return (
     <>
-      <BrowserRouter>
-        <GlobalStyle />
-        <Routes>
-          <Route path="/" element={<FormContainer />}>
-            <Route path="/auth" element={<FormContainer />} />
-          </Route>
-          <Route element={<ProtectedRoutes />}>
-            <Route path="/boards" element={<AllBoards />} />
-            <Route path="/me" element={<MyProfile />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <AppProvider>
+        <BrowserRouter>
+          <GlobalStyle />
+          <Routes>
+            <Route path="/" element={<FormContainer />}>
+              <Route path="/auth" element={<FormContainer />} />
+            </Route>
+            <Route element={<ProtectedRoutes />}>
+                <Route path="/boards" element={<AllBoards />} />
+                <Route path="/boards/:id" element={<Board />} />
+                <Route path="/me" element={<MyProfile />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </AppProvider>
     </>
   );
 }

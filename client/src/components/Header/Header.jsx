@@ -11,12 +11,15 @@ import {
 } from '@chakra-ui/react'
 import { CgMenuGridR } from "react-icons/cg";
 import { BsCaretDownFill } from "react-icons/bs";
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../context/AppProvider';
 
-const Header = ({name, avatar}) => {
+const Header = () => {
+    const {name, avatar, clearUser, boards} = useAppContext()
     const navigate = useNavigate()
-    const {clearUser} = useAppContext()
+    const location = useLocation()
+
+    const board = boards.filter(board => board._id === location.state)
 
     const logout = () => {
         localStorage.removeItem('auth-token')
@@ -27,18 +30,21 @@ const Header = ({name, avatar}) => {
     const myProfile = () => {
         navigate('/me')
     }
+
+    const pathArr = window.location.pathname.split('/')
   return (
     <StyledHeader>
         <img src={logo} alt="Crello Logo" className='logo' />
         {
-            !window.location.pathname.includes('/boards') &&
+            pathArr.length === 3 &&
             <div className="board">
-                <h1>DevChallenges Board | </h1>
+                <h1>{board[0].title} | </h1>
                 <Button 
-                    leftIcon={<CgMenuGridR />} 
+                    leftIcon={<CgMenuGridR />}
                     size='sm'
                     ml={3}
                     color="#828282"
+                    onClick={() => navigate('/boards')}
                 >
                     All board
                 </Button>
@@ -59,6 +65,7 @@ const Header = ({name, avatar}) => {
                     size='sm'
                     bg='#fff'
                     rightIcon={<BsCaretDownFill />}
+                    textTransform="capitalize"
                 >
                     {name}
                 </MenuButton>
