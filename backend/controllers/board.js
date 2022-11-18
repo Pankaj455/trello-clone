@@ -15,7 +15,6 @@ const createBoard = async (req, res) => {
       const cloud = await cloudinary.v2.uploader.upload(cover, {
         folder: "covers",
       });
-
       newBoardData.cover = {
         public_id: cloud.public_id,
         url: cloud.secure_url,
@@ -32,6 +31,7 @@ const createBoard = async (req, res) => {
       board: newBoard,
     });
   } catch (error) {
+    // console.log(error);
     return res.status(500).json({
       success: false,
       message: error.message,
@@ -167,7 +167,7 @@ const updateBoard = async (req, res) => {
 
     if (title) {
       board.title = title;
-    } else if (description) {
+    } else if (description !== undefined) {
       board.description = description;
     } else {
       board.visibility = visibility;
