@@ -30,6 +30,10 @@ const boardSchema = mongoose.Schema({
       ref: "List",
     },
   ],
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 module.exports = mongoose.model("Board", boardSchema);

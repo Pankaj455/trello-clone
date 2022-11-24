@@ -19,6 +19,10 @@ const cardSchema = mongoose.Schema({
       color: String,
     },
   ],
+  cover: {
+    public_id: String,
+    url: String,
+  },
   comments: [
     {
       user: {
