@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Wrapper } from './wrapper.styled'
-import Card from '../Card/Card'
+import Card from '../BoardCard/Card'
 import Modal from '../CreateBoard/Modal'
 import Header from '../Header/Header'
+import Loader from '../Loader/Loader'
 import { 
   Button,
 } from '@chakra-ui/react'
 import { AiOutlinePlus } from 'react-icons/ai'
-import { useAppContext } from '../../context/AppProvider'
+import { useAppContext } from '../../context/userContext'
 
 const AllBoards = () => {
   const {loadUser, boards, loadingUser} = useAppContext()
@@ -53,7 +54,7 @@ const AllBoards = () => {
         </>
         )  
         :
-        <h1>Loading...</h1>
+        <Loader />
       }
     </>
   )

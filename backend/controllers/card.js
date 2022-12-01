@@ -1,6 +1,7 @@
 const Board = require("../models/Board");
 const Card = require("../models/Card");
 const List = require("../models/List");
+const cloudinary = require("cloudinary");
 
 const addNewCard = async (req, res) => {
   try {
@@ -38,7 +39,8 @@ const addNewCard = async (req, res) => {
     await list.save();
 
     res.status(200).json({
-      _id: newCard._id,
+      card: newCard,
+      success: true,
       message: "New card added successfully!",
     });
   } catch (error) {
@@ -52,13 +54,13 @@ const updateCard = async (req, res) => {
   try {
     const { board_id, card_id, title, description } = req.body;
     const card = await Card.findById(card_id);
-    const board = await Board.findById(board_id);
-    if (!board) {
-      return res.status(404).json({
-        success: false,
-        message: "Board not found!",
-      });
-    }
+    // const board = await Board.findById(board_id);
+    // if (!board) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: "Board not found!",
+    //   });
+    // }
     if (!card) {
       return res.status(404).json({
         success: false,
@@ -66,15 +68,15 @@ const updateCard = async (req, res) => {
       });
     }
     // checking if the user is member of the board or not
-    if (
-      !board.members.includes(req.user._id) &&
-      board.admin.toString() !== req.user._id.toString()
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: "Only board members can update card!",
-      });
-    }
+    // if (
+    //   !board.members.includes(req.user._id) &&
+    //   board.admin.toString() !== req.user._id.toString()
+    // ) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Only board members can update card!",
+    //   });
+    // }
 
     if (title) card.title = title;
     if (description) card.description = description;
@@ -91,7 +93,230 @@ const updateCard = async (req, res) => {
   }
 };
 
+const createComment = async (req, res) => {
+  try {
+    const { _id, card_id, comment, commentedAt } = req.body;
+    const card = await Card.findById(card_id);
+    if (!card) {
+      res.status(404).json({
+        success: false,
+        message: "Card not found!",
+      });
+    }
+
+    const newComment = {
+      _id,
+      user: req.user,
+      comment,
+      commentedAt,
+    };
+
+    card.comments.push(newComment);
+    await card.save();
+
+    res.status(200).json({
+      success: true,
+      message: "commented successfully...",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const deleteComment = async (req, res) => {
+  try {
+    const { comment_id, card_id } = req.body;
+    const card = await Card.findById(card_id);
+    if (!card) {
+      res.status(404).json({
+        success: false,
+        message: "Card not found!",
+      });
+    }
+
+    card.comments = card.comments.filter(
+      (comment) => comment._id !== comment_id
+    );
+    await card.save();
+
+    res.status(200).json({
+      success: true,
+      message: "comment deleted successfully...",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const getAllComments = async (req, res) => {
+  try {
+    const card = await Card.findOne(
+      { _id: req.query.id },
+      { comments: 1, members: 1 }
+    ).populate([
+      {
+        path: "comments",
+        populate: {
+          path: "user",
+          model: "User",
+          select: "name avatar",
+        },
+      },
+    ]);
+    if (!card) {
+      res.status(404).json({
+        success: false,
+        message: "Card not found!",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      members: card.members,
+      comments: card.comments,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const addMember = async (req, res) => {
+  try {
+    const { member_id, card_id } = req.body;
+    const card = await Card.findById(card_id);
+    if (!card) {
+      res.status(404).json({
+        success: false,
+        message: "Card not found!",
+      });
+    }
+
+    card.members.push(member_id);
+    await card.save();
+
+    res.status(200).json({
+      success: true,
+      message: "member added successfully...",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const removeMember = async (req, res) => {
+  try {
+    const { member_id, card_id } = req.body;
+    const card = await Card.findById(card_id);
+    if (!card) {
+      res.status(404).json({
+        success: false,
+        message: "Card not found!",
+      });
+    }
+
+    card.members = card.members.filter((member) => member != member_id);
+    await card.save();
+
+    res.status(200).json({
+      success: true,
+      message: "member removed successfully...",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const setCover = async (req, res) => {
+  try {
+    const { cover, card_id } = req.body;
+    const card = await Card.findById(card_id);
+
+    if (!card) {
+      res.status(404).json({
+        success: false,
+        message: "Card not found!",
+      });
+    }
+
+    const cloud = await cloudinary.v2.uploader.upload(cover, {
+      folder: "card_covers",
+    });
+
+    card.cover = {
+      public_id: cloud.public_id,
+      url: cloud.secure_url,
+    };
+
+    await card.save();
+
+    res.status(200).json({
+      success: true,
+      cover: card.cover,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const removeCover = async (req, res) => {
+  try {
+    const { cover_id, card_id } = req.body;
+    const card = await Card.findById(card_id);
+
+    if (!card) {
+      res.status(404).json({
+        success: false,
+        message: "Card not found!",
+      });
+    }
+
+    await cloudinary.v2.uploader.destroy(cover_id, (error) => {
+      if (error) {
+        throw new Error(error);
+      }
+    });
+
+    card.cover = undefined;
+
+    await card.save();
+
+    res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   addNewCard,
   updateCard,
+  createComment,
+  deleteComment,
+  addMember,
+  removeMember,
+  getAllComments,
+  setCover,
+  removeCover,
 };

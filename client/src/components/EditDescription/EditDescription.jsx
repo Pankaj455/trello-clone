@@ -4,7 +4,7 @@ import { Button,
 } from '@chakra-ui/react'
 import React, { useRef, useState } from 'react'
 import axios from '../../axios'
-import { useAppContext } from '../../context/AppProvider'
+import { useAppContext } from '../../context/userContext'
 
 const EditDescription = ({setEdit, boardId, description}) => {
     const {updateBoard} = useAppContext()
@@ -15,8 +15,6 @@ const EditDescription = ({setEdit, boardId, description}) => {
 
     const saveDescription = async () => {
         const newDescription = value.trim()
-        console.log(description);
-        console.log(newDescription);
         if(newDescription === description){
             console.log('if condition');
             setEdit(false)

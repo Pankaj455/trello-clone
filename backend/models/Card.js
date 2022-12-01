@@ -16,7 +16,10 @@ const cardSchema = mongoose.Schema({
   labels: [
     {
       name: String,
-      color: String,
+      theme: {
+        color: String,
+        bg: String,
+      },
     },
   ],
   cover: {
@@ -25,6 +28,7 @@ const cardSchema = mongoose.Schema({
   },
   comments: [
     {
+      _id: String,
       user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: User,
@@ -32,6 +36,10 @@ const cardSchema = mongoose.Schema({
       comment: {
         type: String,
         required: true,
+      },
+      commentedAt: {
+        type: Date,
+        default: new Date(),
       },
     },
   ],

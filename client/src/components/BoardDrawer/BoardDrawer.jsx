@@ -19,13 +19,13 @@ import {
 import { FaUserCircle } from 'react-icons/fa'
 import { MdAdd, MdDescription, MdEdit } from 'react-icons/md'
 import axios from '../../axios'
-import { useAppContext } from '../../context/AppProvider'
+import { useAppContext } from '../../context/userContext'
 import { useLocation } from 'react-router-dom'
 import EditDescription from '../EditDescription/EditDescription'
 
 
 const BoardDrawer = ({isOpen, onClose}) => {
-    const {boards, _id: userId, admin, getAdminProfile, name} = useAppContext()
+    const {boards, _id: userId, admin, getAdminProfile, name, avatar} = useAppContext()
     const location = useLocation()
 
     const [edit, setEdit] = useState(false)
@@ -85,7 +85,7 @@ const BoardDrawer = ({isOpen, onClose}) => {
                         spacing={4} 
                         mb={3}
                     >
-                        <Avatar size='sm' src='https://bit.ly/dan-abramov' />
+                        <Avatar size='sm' name={name} src={avatar?.url} />
                         <VStack
                             fontFamily="'Poppins', sans-serif"
                             spacing={0}
@@ -111,14 +111,14 @@ const BoardDrawer = ({isOpen, onClose}) => {
                                 fontSize={10}
                                 fontWeight={500}
                                 color="#bdbdbd"
-                            >on 4th July, 2020</Text>
+                            >on 24th October, 2022</Text>
                         </VStack>
                     </HStack>
                     <ButtonGroup
                         fontFamily="'Poppins', sans-serif"
                         spacing={4}
                         mb={3}
-                        >
+                    >
                         <Button 
                             variant="text"
                             size="xs"
@@ -192,12 +192,15 @@ const BoardDrawer = ({isOpen, onClose}) => {
                                                 flexGrow={1}
                                                 spacing={4}
                                             >
-                                                <Avatar size='xs' src='https://bit.ly/dan-abramov' />
+                                                <Avatar 
+                                                    size='xs'
+                                                    name={name}
+                                                    src={avatar?.url} 
+                                                />
                                                 <Text
                                                     fontSize={11}
                                                     fontWeight={500}
                                                     fontFamily="'Poppins', sans-serif"
-                                                    textTransform="capitalize"
                                                     >{admin.name}</Text>
                                             </HStack>
                                             <Text 
@@ -211,15 +214,19 @@ const BoardDrawer = ({isOpen, onClose}) => {
                                 }
                                 {
                                     board[0].members.map(member => {
-                                    return <HStack key={member._id} alignItems="center" mb={5}>
+                                    return <Box key={member._id}>
                                         {
                                             member._id !== userId && (
-                                                <>
+                                                <HStack key={member._id} alignItems="center" mb={5}>
                                                     <HStack
                                                         flexGrow={1}
                                                         spacing={4}
                                                     >
-                                                        <Avatar size='xs' src='https://bit.ly/dan-abramov' />
+                                                        <Avatar 
+                                                            size='xs'
+                                                            name={member.name}
+                                                            src={member.avatar?.url}
+                                                        />
                                                         <Text
                                                             fontSize={11}
                                                             fontWeight={500}
@@ -235,10 +242,10 @@ const BoardDrawer = ({isOpen, onClose}) => {
                                                             >Remove</Button>
                                                         )
                                                     }
-                                                </>
+                                                </HStack>
                                             )
                                         }
-                                    </HStack>
+                                    </Box>
                                     })
                                 }
                                 </Box>

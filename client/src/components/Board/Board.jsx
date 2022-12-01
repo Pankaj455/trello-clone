@@ -1,17 +1,21 @@
-import { useAppContext } from '../../context/AppProvider'
+import { useAppContext } from '../../context/userContext'
 import Header from '../Header/Header'
 import Visibility from '../Visibility/Visibility'
-import BoardDrawer from '../BoardDrawer/BoardDrawer'
 import { Button,
   AvatarGroup,
   Avatar,
   Tooltip,
+  Flex,
+  Image
 } from '@chakra-ui/react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { StyledBoard } from './board.styled'
+import Loader from '../Loader/Loader'
 import BoardMenu from '../BoardMenu/BoardMenu'
+import ListContainer from '../ListContainer/ListContainer'
+import useAuth from '../../hooks/useAuth'
 
 const Board = () => {
   const {boards, loadingUser, loadUser, error} = useAppContext()
@@ -19,14 +23,10 @@ const Board = () => {
 
   const board = boards.filter(board => board._id === location.state);
 
-  useEffect(() => {
-    if(loadingUser){
-      loadUser()
-    }
-  }, [])
+  const {isAdmin} = useAuth()
 
   return (
-    !loadingUser &&
+    !loadingUser ?
     <>
       <Header />
       <StyledBoard>
@@ -35,7 +35,7 @@ const Board = () => {
           <div className="members">
             <AvatarGroup size='sm' spacing={2}>
               {
-                board.length > 0 && board[0].members.map(member => {
+                board[0].members.map(member => {
                   return <Avatar key={member._id} name={member.name} />
                 })
               }
@@ -45,7 +45,7 @@ const Board = () => {
               <Avatar size='sm' src='https://bit.ly/prosper-baba' /> */}
             </AvatarGroup>
             {
-              board.length > 0 && board[0].members.length === 0 ?
+              isAdmin && ( board[0].members.length === 0 ?
               (<Tooltip
                 hasArrow
                 label='Invite'
@@ -66,12 +66,13 @@ const Board = () => {
               >
                 <AiOutlinePlus />
               </Button>)
-            }
+            )}
           </div>
           <BoardMenu />
         </div>
+        <ListContainer boards={boards} />
       </StyledBoard>
-    </>
+    </> : <Loader />
   )
 }
 

@@ -35,6 +35,7 @@ const userReducer = (state, action) => {
       };
 
     case "ADD_BOARD":
+      console.log("creating board");
       return {
         ...state,
         boards: [...state.boards, action.payload],

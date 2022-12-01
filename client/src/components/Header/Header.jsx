@@ -12,7 +12,7 @@ import {
 import { CgMenuGridR } from "react-icons/cg";
 import { BsCaretDownFill } from "react-icons/bs";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../context/AppProvider';
+import { useAppContext } from '../../context/userContext';
 
 const Header = () => {
     const {name, avatar, clearUser, boards} = useAppContext()

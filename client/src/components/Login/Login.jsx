@@ -16,7 +16,7 @@ import { MdEmail, MdHttps } from 'react-icons/md'
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai'
 import axios from '../../axios'
 import { useNavigate } from 'react-router-dom'
-import { useAppContext } from '../../context/AppProvider'
+import { useAppContext } from '../../context/userContext'
 
 const Login = () => {
     const {loadUser} = useAppContext()

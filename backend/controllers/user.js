@@ -10,6 +10,7 @@ const getProfile = async (req, res) => {
     } else {
       user = await User.findOne({ _id: req.user._id }).populate({
         path: "boards",
+        select: "-lists",
         populate: {
           path: "members",
           model: "User",
@@ -39,7 +40,7 @@ const getBoards = async (req, res) => {
       populate: {
         path: "members",
         model: "User",
-        select: "name",
+        select: ["name", "avatar"],
       },
     });
 

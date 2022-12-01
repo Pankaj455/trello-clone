@@ -5,6 +5,7 @@ export const StyledBoard = styled.div`
 
   .row {
     display: flex;
+    margin-bottom: 24px;
 
     .members {
       display: flex;

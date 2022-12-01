@@ -1,5 +1,5 @@
 import { useContext, createContext, useReducer } from "react";
-import reducer from "../reducers/AppReducer";
+import reducer from "../reducers/userReducer";
 import axios from "../axios";
 
 const AppContext = createContext();
@@ -25,7 +25,7 @@ const AppProvider = ({ children }) => {
           token: localStorage.getItem("auth-token"),
         },
       });
-      // console.log(data.user);
+
       dispatch({ type: "LOAD_USER", payload: response.data.user });
       dispatch({ type: "LOADING_SUCCESS" });
     } catch (error) {

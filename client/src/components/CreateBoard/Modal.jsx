@@ -9,7 +9,7 @@ import { Image,
 import { MdHttps, MdImage, MdPublic } from 'react-icons/md'
 import { AiOutlinePlus } from 'react-icons/ai'
 import axios from '../../axios'
-import { useAppContext } from '../../context/AppProvider'
+import { useAppContext } from '../../context/userContext'
 
 const Modal = ({isOpen, close}) => {
     const {createBoard} = useAppContext()
