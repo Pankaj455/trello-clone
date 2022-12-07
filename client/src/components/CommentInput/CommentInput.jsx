@@ -19,6 +19,8 @@ const CommentInput = ({comments, id, listId}) => {
     const {createNewComment, removeComment} = useListContext()
     const commentRef = useRef()
     
+    // console.log(comments);
+
     const createComment = e => {
         e.preventDefault()
         const newComment = commentRef.current.value.trim()
@@ -90,15 +92,13 @@ const CommentInput = ({comments, id, listId}) => {
                 marginBottom="20px"
             />
             {
-                comments?.map((comment) => {
+                comments.map((comment) => {
                     return (
-                        <>
-                            <Comment
-                                key={comment._id}
-                                comment={comment}
-                                deleteComment={deleteComment}
-                            />
-                        </>
+                        <Comment
+                            key={comment._id}
+                            comment={comment}
+                            deleteComment={deleteComment}
+                        />
                     )
                 })
             }

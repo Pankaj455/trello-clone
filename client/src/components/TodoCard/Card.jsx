@@ -17,7 +17,7 @@ import CardModal from "../CardModal/CardModal"
 import useAuth from '../../hooks/useAuth'
 
 
-const Card = ({id, listId, listTitle, title, cover, labels, comments, members, description}) => {
+const Card = ({id, listId, listTitle, title, cover, labels, comments, members, description, index}) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const {isAdmin} = useAuth()
@@ -29,16 +29,16 @@ const Card = ({id, listId, listTitle, title, cover, labels, comments, members, d
       backgroundColor="#fff"
       boxShadow="0px 4px 12px rgba(0, 0, 0, 0.05)"
       borderRadius="12px"
-      padding="12px"
+      padding="12px 12px 20px 12px"
       cursor="pointer"
       onClick={onOpen}
     >
       {
-        isOpen && (
+        isOpen ? (
           <CardModal
             id={id}
             listId={listId}
-            isOpen={isOpen} 
+            isOpen={isOpen}
             onClose={onClose}
             title={title}
             listTitle={listTitle}
@@ -46,8 +46,9 @@ const Card = ({id, listId, listTitle, title, cover, labels, comments, members, d
             comments={comments}
             members={members}
             cover={cover}
+            index={index}
           />
-        )
+        ) : null
       }
       {
         cover && (
@@ -55,6 +56,8 @@ const Card = ({id, listId, listTitle, title, cover, labels, comments, members, d
             width="100%"
             borderRadius="12px"
             overflow="hidden"
+            display='flex'
+            justifyContent='center'
           >
             <Image
               src={cover.url}
@@ -101,42 +104,40 @@ const Card = ({id, listId, listTitle, title, cover, labels, comments, members, d
           </Flex>
         )
       }
-      <Flex direction="row">
-        <Flex
-          direction="row"
-          gap={1}
-        >
-          <AvatarGroup size="sm" max={2}>
-          {
-            members?.map(member => {
-              return <Avatar
-                key={member._id}
-                name={member.name}
-                src={member.avatar?.url}
-              />
-            })
-          }
-          </AvatarGroup>
-          {
-            isAdmin && (
-              <AddMemberToCard
-                id={id}
-                listId={listId}
-                members={members}
+      <Flex
+        direction="row"
+        gap={1}
+      >
+        <AvatarGroup size="sm" max={2}>
+        {
+          members?.map(member => {
+            return <Avatar
+              key={member._id}
+              name={member.name}
+              src={member.avatar?.url}
+            />
+          })
+        }
+        </AvatarGroup>
+        {
+          isAdmin && (
+            <AddMemberToCard
+              id={id}
+              listId={listId}
+              members={members}
+            >
+              <Button
+                size='sm'
+                colorScheme='blue'
+                borderRadius="10px"
+                fontSize="16px"
+                onClick={e => e.stopPropagation()}
               >
-                <Button
-                  size='sm'
-                  colorScheme='blue'
-                  borderRadius="10px"
-                  fontSize="16px"
-                  onClick={e => e.stopPropagation()}
-                >
-                  <AiOutlinePlus />
-                </Button>
-              </AddMemberToCard>
-            )
-          }
-        </Flex>
+                <AiOutlinePlus />
+              </Button>
+            </AddMemberToCard>
+          )
+        }
       </Flex>
     </Stack>
   )

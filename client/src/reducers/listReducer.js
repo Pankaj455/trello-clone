@@ -256,6 +256,63 @@ const listReducer = (state, action) => {
         isUploading: true,
       };
 
+    case "MOVE_CARD":
+      const { fromList, toList, fromIndex, toIndex } = action.payload;
+      if (fromList === toList) {
+        if (fromIndex !== toIndex) {
+          const targetList = {
+            ...state.allLists.filter((list) => list._id === fromList)[0],
+          };
+          const cards = [...targetList.cards];
+          const cardToMove = cards.splice(fromIndex, 1)[0];
+          cards.splice(toIndex, 0, cardToMove);
+          return {
+            ...state,
+            allLists: state.allLists.map((list) => {
+              if (list._id === toList) {
+                list = {
+                  ...list,
+                  cards,
+                };
+              }
+              return list;
+            }),
+          };
+        } else {
+          return state;
+        }
+      }
+
+      const srcList = {
+        ...state.allLists.filter((list) => list._id === fromList)[0],
+      };
+      const srcCards = [...srcList.cards];
+      const cardToMove = srcCards.splice(fromIndex, 1)[0];
+
+      const destList = {
+        ...state.allLists.filter((list) => list._id === toList)[0],
+      };
+      const destCards = [...destList.cards];
+      destCards.splice(toIndex, 0, cardToMove);
+
+      return {
+        ...state,
+        allLists: state.allLists.map((list) => {
+          if (list._id === fromList) {
+            list = {
+              ...list,
+              cards: srcCards,
+            };
+          } else if (list._id === toList) {
+            list = {
+              ...list,
+              cards: destCards,
+            };
+          }
+          return list;
+        }),
+      };
+
     default:
       return state;
   }

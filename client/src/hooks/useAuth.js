@@ -18,7 +18,7 @@ const useAuth = () => {
     adminId =
       typeof board[0].admin === "string" ? board[0].admin : board[0].admin._id;
   }
-  return { isAdmin: adminId === _id ? true : false };
+  return { isAdmin: adminId === _id };
 };
 
 export default useAuth;

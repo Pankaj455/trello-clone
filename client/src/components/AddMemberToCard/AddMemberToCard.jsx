@@ -69,7 +69,8 @@ const AddMemberToCard = ({members, id, listId, children}) => {
                         alignItems="space-between"
                     >
                         {
-                            boardMembers.length > 0 ? boardMembers.map(boardMember => {
+                            isAdmin ? (
+                                boardMembers.length > 0 ? boardMembers.map(boardMember => {
                                 return (
                                     <Flex
                                         direction="row"
@@ -90,7 +91,7 @@ const AddMemberToCard = ({members, id, listId, children}) => {
                                                 >{boardMember.name}</Text>
                                         </HStack>
                                         {
-                                            isAdmin && (!memberIds.includes(boardMember._id) ? (
+                                            !memberIds.includes(boardMember._id) ? (
                                                 <Button
                                                     size="xs"
                                                     colorScheme="blue"
@@ -113,23 +114,60 @@ const AddMemberToCard = ({members, id, listId, children}) => {
                                                 >
                                                     Remove
                                                 </Button>
-                                            ))
+                                            )
                                         }
                                     </Flex>
                                 )
-                            }) : (
-                                <Box
-                                    backgroundColor="#F8F9FD"
-                                    borderRadius="6px"
-                                    p={2}
-                                >
-                                    <Text
-                                        fontSize="12px"
-                                        fontFamily="'Noto Sans', serif"
-                                        fontWeight="400"
-                                        color="#828282"
-                                    >Looks like that there are no members in the board. First add them to the board and then to the card.</Text>
-                                </Box>
+                                }) : (
+                                    <Box
+                                        backgroundColor="#F8F9FD"
+                                        borderRadius="6px"
+                                        p={2}
+                                    >
+                                        <Text
+                                            fontSize="12px"
+                                            fontFamily="'Noto Sans', serif"
+                                            fontWeight="400"
+                                            color="#828282"
+                                        >Looks like that there are no members in the board. First add them to the board and then to the card.</Text>
+                                    </Box>
+                                )) : (
+                                members.length > 0 ? (members.map(member => {
+                                    return (
+                                        <Flex
+                                            direction="row"
+                                            key={member._id}
+                                        >
+                                        <HStack
+                                            flexGrow={1}
+                                            spacing={4}
+                                        >
+                                            <Avatar size='xs'
+                                                name={member.name}
+                                                src={member.avatar?.url}
+                                            />
+                                            <Text
+                                                fontSize={12}
+                                                fontWeight={500}
+                                                fontFamily="'Poppins', sans-serif"
+                                                >{member.name}</Text>
+                                        </HStack>
+                                        </Flex>
+                                    )
+                                })) : (
+                                    <Box
+                                        backgroundColor="#F8F9FD"
+                                        borderRadius="6px"
+                                        p={2}
+                                    >
+                                        <Text
+                                            fontSize="12px"
+                                            fontFamily="'Noto Sans', serif"
+                                            fontWeight="400"
+                                            color="#828282"
+                                        >No members are there in the board.</Text>
+                                    </Box>
+                                )
                             )
                         }
                     </VStack>

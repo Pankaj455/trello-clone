@@ -115,12 +115,13 @@ const List = ({list, board_id}) => {
         </HStack>
         <VStack gap={6}>
             {
-                cards?.map(card =>
+                cards?.map((card, index) =>
                     <Card
                         key={card._id}
-                        id={card._id}
+                        index={index}
                         listId={list._id}
                         listTitle={list.title}
+                        id={card._id}
                         title={card.title}
                         cover={card.cover}
                         members={card.members}

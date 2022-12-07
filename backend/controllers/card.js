@@ -276,6 +276,55 @@ const setCover = async (req, res) => {
   }
 };
 
+const updateCover = async (req, res) => {
+  try {
+    const { prev_cover_id, cover, card_id } = req.body;
+    const card = await Card.findById(card_id);
+
+    if (!card) {
+      res.status(404).json({
+        success: false,
+        message: "Card not found!",
+      });
+    }
+
+    await cloudinary.v2.uploader.destroy(prev_cover_id, (error) => {
+      if (error) {
+        throw new Error(error);
+      }
+    });
+
+    const cloud = await cloudinary.v2.uploader.upload(
+      cover,
+      {
+        folder: "card_covers",
+      },
+      (error) => {
+        if (error) {
+          throw new Error(error);
+        }
+      }
+    );
+
+    card.cover = {
+      public_id: cloud.public_id,
+      url: cloud.secure_url,
+    };
+
+    await card.save();
+
+    res.status(200).json({
+      success: true,
+      cover: card.cover,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const removeCover = async (req, res) => {
   try {
     const { cover_id, card_id } = req.body;
@@ -319,4 +368,5 @@ module.exports = {
   getAllComments,
   setCover,
   removeCover,
+  updateCover,
 };

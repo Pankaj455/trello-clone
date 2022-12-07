@@ -29,15 +29,18 @@ import { FaUserCircle } from "react-icons/fa"
 import { useListContext } from "../../context/listContext"
 import AddMemberToCard from "../AddMemberToCard/AddMemberToCard"
 import { useEffect } from "react"
+import Movecard from "../Movecard/Movecard"
+import useAuth from "../../hooks/useAuth"
 
-const CardModal = ({id, listId, isOpen, onClose, listTitle, title, description, comments, members, cover}) => {
-    const {updateCardTitle, loadComments, setCover, removeCover, isUploading} = useListContext()
+const CardModal = ({index, id, listId, isOpen, onClose, listTitle, title, description, comments, members, cover}) => {
+    const {updateCardTitle, loadComments, setCover, updateCover, removeCover, isUploading} = useListContext()
     const [isEditingTitle, setIsEditingTitle] = useState(false)
     const [loading, setLoading] = useState(true)
     const [coverLoadingText, setCoverLoadingText] = useState()
     const titleRef = useRef()
     const imgRef = useRef()
 
+    const {isAdmin} = useAuth()
 
     const loadCardData = async () => {
         await loadComments(listId, id)
@@ -65,7 +68,11 @@ const CardModal = ({id, listId, isOpen, onClose, listTitle, title, description, 
         if(image && image.type.substr(0, 5) === 'image'){
             const reader = new FileReader()
             reader.onloadend = function () {
-                setCover(reader.result.toString(), id, listId)
+                if(cover){
+                    updateCover(cover.public_id, reader.result.toString(), id, listId)
+                }else{
+                    setCover(reader.result.toString(), id, listId)
+                }
             }
             reader.readAsDataURL(image)
         }
@@ -73,6 +80,7 @@ const CardModal = ({id, listId, isOpen, onClose, listTitle, title, description, 
 
     const removeCardCover = () => {
         removeCover(cover, id, listId)
+        imgRef.current.value = null
     }
   return (
     <Modal 
@@ -142,18 +150,29 @@ const CardModal = ({id, listId, isOpen, onClose, listTitle, title, description, 
                             )
                             }
                             <Text as="span"
-                            fontSize="11px"
-                            fontFamily="'Poppins', sans-serif"
-                            fontWeight="600"
-                            color="#BDBDBD"
-                            >in list &nbsp;<Text as="span" color="#000">{listTitle}</Text>
+                                fontSize="11px"
+                                fontFamily="'Poppins', sans-serif"
+                                fontWeight="600"
+                                color="#BDBDBD"
+                                display='inline-block'
+                                mb='18px'
+                            >in list &nbsp;<Movecard listId={listId} index={index} listTitle={listTitle} />
                             </Text>
-                            <br />
-                            <CardDescription 
-                                id={id}
-                                listId={listId}
-                                description={description}
-                            />
+                            {
+                                description ? (
+                                    <CardDescription
+                                        id={id}
+                                        listId={listId}
+                                        description={description}
+                                    />
+                                    ) : isAdmin && (
+                                        <CardDescription
+                                            id={id}
+                                            listId={listId}
+                                            description={description}
+                                        />
+                                    )
+                            }
                             {
                                 !loading ? (
                                     <CommentInput

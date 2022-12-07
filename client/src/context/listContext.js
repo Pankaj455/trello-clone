@@ -73,7 +73,7 @@ const ListDataProvider = ({ children }) => {
   const createCard = async (title, list_id, board_id) => {
     try {
       const response = await axios.post(
-        "/board/list/card/new",
+        "/board/card/new",
         {
           board_id,
           list_id,
@@ -352,6 +352,40 @@ const ListDataProvider = ({ children }) => {
     // });
   };
 
+  const updateCover = async (prev_cover_id, cover, card_id, list_id) => {
+    try {
+      dispatch({ type: "UPLOADING_REQUEST" });
+      const response = await axios.put(
+        "/board/card/updateCover",
+        { card_id, cover, prev_cover_id },
+        {
+          headers: {
+            token: localStorage.getItem("auth-token"),
+          },
+        }
+      );
+      if (response.data.success) {
+        dispatch({
+          type: "SET_CARD_COVER",
+          payload: { card_id, cover: response.data.cover, list_id },
+        });
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+    // dispatch({
+    //   type: "SET_CARD_COVER",
+    //   payload: { card_id, cover: { url: cover }, list_id },
+    // });
+  };
+
+  const moveCard = async (fromList, toList, fromIndex, toIndex) => {
+    dispatch({
+      type: "MOVE_CARD",
+      payload: { fromList, toList, fromIndex, toIndex },
+    });
+  };
+
   return (
     <ListContext.Provider
       value={{
@@ -370,7 +404,9 @@ const ListDataProvider = ({ children }) => {
         addMemberToCard,
         removeMemberFromCard,
         setCover,
+        updateCover,
         removeCover,
+        moveCard,
       }}
     >
       {children}

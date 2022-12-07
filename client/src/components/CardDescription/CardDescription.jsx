@@ -43,7 +43,7 @@ const CardDescription = ({id, listId, description}) => {
                 leftIcon={<MdDescription />}
                 p={0}
                 color="#bdbdbd"
-                fontSize={10}
+                fontSize={14}
                 fontWeight={500}
                 cursor="auto"
             >Description</Button>
