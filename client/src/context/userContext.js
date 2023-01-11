@@ -8,6 +8,7 @@ const initialState = {
   name: "",
   boards: [],
   loadingUser: true,
+  isLoading: false,
   error: "",
 };
 
@@ -59,6 +60,48 @@ const AppProvider = ({ children }) => {
     dispatch({ type: "UPDATE_BOARD_INFO", payload });
   };
 
+  const addMemberToBoard = async (user, board_id) => {
+    try {
+      // dispatch({ type: "REQUEST_LOADING" });
+      const response = await axios.post(
+        "/board/addMember",
+        { user_id: user._id, board_id },
+        {
+          headers: {
+            token: localStorage.getItem("auth-token"),
+          },
+        }
+      );
+      if (response.data.success) {
+        dispatch({ type: "ADD_MEMBER", payload: { user, board_id } });
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+    // dispatch({ type: "ADD_MEMBER", payload: { user, board_id } });
+  };
+
+  const removeMemberFromBoard = async (user, board_id) => {
+    try {
+      // dispatch({ type: "REQUEST_LOADING" });
+      const response = await axios.post(
+        "/board/removeMember",
+        { user_id: user._id, board_id },
+        {
+          headers: {
+            token: localStorage.getItem("auth-token"),
+          },
+        }
+      );
+      if (response.data.success) {
+        dispatch({ type: "REMOVE_MEMBER", payload: { user, board_id } });
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+    // dispatch({ type: "REMOVE_MEMBER", payload: { user, board_id } });
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -68,6 +111,8 @@ const AppProvider = ({ children }) => {
         createBoard,
         getAdminProfile,
         updateBoard,
+        addMemberToBoard,
+        removeMemberFromBoard,
       }}
     >
       {children}

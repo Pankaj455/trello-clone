@@ -143,10 +143,31 @@ const uploadAvatar = async (req, res) => {
   }
 };
 
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.find(
+      {
+        name: { $regex: req.params.name, $options: "i" },
+      },
+      { name: 1 }
+    );
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getProfile,
   getBoards,
   register,
   login,
   uploadAvatar,
+  getUsers,
 };

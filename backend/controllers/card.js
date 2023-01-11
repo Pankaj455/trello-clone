@@ -358,6 +358,56 @@ const removeCover = async (req, res) => {
   }
 };
 
+const moveCard = async (req, res) => {
+  try {
+    const { fromList, toList, card_id, fromIndex, toIndex } = req.body;
+
+    // verifying that the card to be moved is not deleted by someone first
+    const card = await Card.findById(card_id);
+    if (!card) {
+      return res.status(404).json({
+        success: false,
+        message: "Card not found",
+      });
+    }
+
+    const srcList = await List.findById(fromList);
+    if (!srcList) {
+      return res.status(404).json({
+        success: false,
+        message: "List not found",
+      });
+    }
+    if (fromList === toList) {
+      const cardToMove = srcList.cards.splice(fromIndex, 1)[0];
+      srcList.cards.splice(toIndex, 0, cardToMove);
+      await srcList.save();
+    } else {
+      const destList = await List.findById(toList);
+      if (!destList) {
+        return res.status(404).json({
+          success: false,
+          message: "Destination list is not found",
+        });
+      }
+
+      const cardToMove = srcList.cards.splice(fromIndex, 1)[0];
+      destList.cards.splice(toIndex, 0, cardToMove);
+      await srcList.save();
+      await destList.save();
+    }
+    res.status(200).json({
+      success: true,
+      message: "The position of card updated successfully!",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   addNewCard,
   updateCard,
@@ -369,4 +419,5 @@ module.exports = {
   setCover,
   removeCover,
   updateCover,
+  moveCard,
 };

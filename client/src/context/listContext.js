@@ -379,11 +379,34 @@ const ListDataProvider = ({ children }) => {
     // });
   };
 
-  const moveCard = async (fromList, toList, fromIndex, toIndex) => {
+  const moveCard = async (fromList, toList, fromIndex, toIndex, card_id) => {
+    if (fromList === toList && fromIndex === toIndex) {
+      return;
+    }
     dispatch({
       type: "MOVE_CARD",
       payload: { fromList, toList, fromIndex, toIndex },
     });
+    try {
+      // console.log("moving card...");
+      const response = await axios.put(
+        "/board/card/move",
+        { card_id, fromList, toList, fromIndex, toIndex },
+        {
+          headers: {
+            token: localStorage.getItem("auth-token"),
+          },
+        }
+      );
+      // if (response.data.success) {
+      // }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+    // dispatch({
+    //   type: "MOVE_CARD",
+    //   payload: { fromList, toList, fromIndex, toIndex },
+    // });
   };
 
   return (
