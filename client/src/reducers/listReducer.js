@@ -313,6 +313,26 @@ const listReducer = (state, action) => {
         }),
       };
 
+    case "REMOVE_MEMBER_FROM_ALL_CARDS":
+      return {
+        ...state,
+        allLists: state.allLists.map((list) => {
+          list = {
+            ...list,
+            cards: list.cards.map((card) => {
+              card = {
+                ...card,
+                members: card.members.filter(
+                  (member) => member._id !== action.payload.user._id
+                ),
+              };
+              return card;
+            }),
+          };
+          return list;
+        }),
+      };
+
     default:
       return state;
   }

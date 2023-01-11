@@ -1,5 +1,7 @@
 const Board = require("../models/Board");
 const User = require("../models/User");
+const Card = require("../models/Card");
+const List = require("../models/List");
 const cloudinary = require("cloudinary");
 
 const createBoard = async (req, res) => {
@@ -97,7 +99,7 @@ const removeMember = async (req, res) => {
     const { user_id, board_id } = req.body;
     const user = await User.findById(user_id);
     if (!user) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         message: "User doesn't exist!",
       });
@@ -105,7 +107,7 @@ const removeMember = async (req, res) => {
 
     const board = await Board.findById(board_id);
     if (!board) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         message: "Board not found!",
       });
@@ -120,11 +122,24 @@ const removeMember = async (req, res) => {
 
     // checking if the member is in the board or not
     if (!board.members.includes(user_id)) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         message: "Member is not in the board!",
       });
     }
+
+    for (let i = 0; i < board.lists.length; i++) {
+      const list = await List.findById(board.lists[i]);
+      for (let j = 0; j < list.cards.length; j++) {
+        let card = await Card.findById(list.cards[j]);
+        let index = card.members.indexOf(user_id);
+        if (index !== -1) {
+          card.members.splice(index, 1);
+          await card.save();
+        }
+      }
+    }
+
     // removing user from the board's members
     board.members.splice(board.members.indexOf(user_id), 1);
     await board.save();

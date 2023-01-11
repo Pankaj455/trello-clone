@@ -22,6 +22,7 @@ import axios from "../../axios";
 import { useAppContext } from "../../context/userContext";
 import { useLocation } from "react-router-dom";
 import EditDescription from "../EditDescription/EditDescription";
+import { useListContext } from "../../context/listContext";
 
 const BoardDrawer = ({ isOpen, onClose }) => {
   const {
@@ -31,8 +32,8 @@ const BoardDrawer = ({ isOpen, onClose }) => {
     getAdminProfile,
     name,
     avatar,
-    removeMemberFromBoard,
   } = useAppContext();
+  const { removeMemberFromBoard } = useListContext();
   const location = useLocation();
 
   const [edit, setEdit] = useState(false);

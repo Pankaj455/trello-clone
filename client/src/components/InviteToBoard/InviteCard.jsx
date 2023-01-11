@@ -18,10 +18,11 @@ import { AiOutlinePlus, AiOutlineSearch } from "react-icons/ai";
 import { useAppContext } from "../../context/userContext";
 import { useParams } from "react-router-dom";
 import { customScrollbar } from "../../utils/util";
+import { useListContext } from "../../context/listContext";
 
 const InviteCard = () => {
-  const { _id, boards, addMemberToBoard, removeMemberFromBoard, isLoading } =
-    useAppContext();
+  const { _id, boards, addMemberToBoard, isLoading } = useAppContext();
+  const { removeMemberFromBoard } = useListContext();
   const { onClose } = useDisclosure();
   const inputRef = useRef("");
   const { id } = useParams();

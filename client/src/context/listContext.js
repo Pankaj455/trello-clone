@@ -14,7 +14,7 @@ const ListContext = createContext();
 export const useListContext = () => useContext(ListContext);
 
 const ListDataProvider = ({ children }) => {
-  const { name, avatar, _id } = useAppContext();
+  const { name, avatar, _id, removeMemberFromUserContext } = useAppContext();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const loadAllLists = async (board_id) => {
@@ -409,6 +409,32 @@ const ListDataProvider = ({ children }) => {
     // });
   };
 
+  const removeMemberFromBoard = async (user, board_id) => {
+    try {
+      dispatch({ type: "REQUEST_LOADING" });
+      const response = await axios.post(
+        "/board/removeMember",
+        { user_id: user._id, board_id },
+        {
+          headers: {
+            token: localStorage.getItem("auth-token"),
+          },
+        }
+      );
+      if (response.data.success) {
+        removeMemberFromUserContext({ user, board_id });
+        dispatch({ type: "REMOVE_MEMBER_FROM_ALL_CARDS", payload: { user } });
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+    // removeMemberFromUserContext({ user, board_id });
+    // dispatch({
+    //   type: "REMOVE_MEMBER_FROM_ALL_CARDS",
+    //   payload: { user, board_id },
+    // });
+  };
+
   return (
     <ListContext.Provider
       value={{
@@ -430,6 +456,7 @@ const ListDataProvider = ({ children }) => {
         updateCover,
         removeCover,
         moveCard,
+        removeMemberFromBoard,
       }}
     >
       {children}
