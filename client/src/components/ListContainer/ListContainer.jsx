@@ -95,7 +95,7 @@ const ListContainer = ({ boards }) => {
         {addingList ? (
           <>
             <form onSubmit={createNewList}>
-              <Input ref={listInputRef} bg="white" mb={1} />
+              <Input ref={listInputRef} bg="white" mb={1} autoFocus />
               <Button
                 size="sm"
                 type="submit"

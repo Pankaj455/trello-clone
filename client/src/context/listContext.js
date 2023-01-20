@@ -64,10 +64,23 @@ const ListDataProvider = ({ children }) => {
   };
 
   const deleteListFromBoard = async (list_id, board_id) => {
-    /*
-      API CAll
-    */
-    dispatch({ type: "REMOVE_LIST", payload: list_id });
+    try {
+      const response = await axios.post(
+        "/board/list/delete",
+        { list_id, board_id },
+        {
+          headers: {
+            token: localStorage.getItem("auth-token"),
+          },
+        }
+      );
+      if (response.data.success) {
+        dispatch({ type: "REMOVE_LIST", payload: list_id });
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+    // dispatch({ type: "REMOVE_LIST", payload: list_id });
   };
 
   const createCard = async (title, list_id, board_id) => {
@@ -403,10 +416,6 @@ const ListDataProvider = ({ children }) => {
     } catch (error) {
       console.log("Error: ", error);
     }
-    // dispatch({
-    //   type: "MOVE_CARD",
-    //   payload: { fromList, toList, fromIndex, toIndex },
-    // });
   };
 
   const removeMemberFromBoard = async (user, board_id) => {
