@@ -1,5 +1,7 @@
 const Board = require("../models/Board");
+const Card = require("../models/Card");
 const List = require("../models/List");
+const cloudinary = require("cloudinary");
 
 const addNewList = async (req, res) => {
   try {
@@ -114,20 +116,29 @@ const deleteList = async (req, res) => {
       });
     }
 
-    const cards = list.cards;
-    const cardWithCovers = cards.filter((card) => card.cover !== undefined);
-    console.log(cardWithCovers);
+    // removing cards
+    const cardIds = list.cards;
+    for (let cardId of cardIds) {
+      let card = await Card.findById(cardId);
+      if (card) {
+        if (card.cover.public_id) {
+          await cloudinary.v2.uploader.destroy(
+            card.cover.public_id,
+            (error) => {
+              if (error) {
+                throw new Error(error);
+              }
+            }
+          );
+        }
+        // console.log(card);
+        await card.remove();
+      }
+    }
 
-    /*
-    /* Todo
-    /* remove all the images from cloudinary
-    /* remove all the cards from the database
-    /* remove the list from its collection and its board
-    */
-
-    // await List.findByIdAndRemove(list_id)
-    // board.lists.splice(board.lists.indexOf(list_id), 1)
-    // board.save();
+    await List.findByIdAndRemove(list_id);
+    board.lists.splice(board.lists.indexOf(list_id), 1);
+    await board.save();
 
     res.status(200).json({
       success: true,
@@ -176,4 +187,5 @@ module.exports = {
   updateList,
   deleteList,
   getAllLists,
+  deleteList,
 };

@@ -6,7 +6,6 @@ const {
   updateBoard,
 } = require("../controllers/board");
 
-const { addNewList } = require("../controllers/list");
 const isAuthenticated = require("../middlewares/auth");
 
 router.route("/create/").post(isAuthenticated, createBoard);

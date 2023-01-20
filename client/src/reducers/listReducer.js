@@ -313,6 +313,41 @@ const listReducer = (state, action) => {
         }),
       };
 
+    case "REMOVE_MEMBER_FROM_ALL_CARDS":
+      return {
+        ...state,
+        allLists: state.allLists.map((list) => {
+          list = {
+            ...list,
+            cards: list.cards.map((card) => {
+              card = {
+                ...card,
+                members: card.members.filter(
+                  (member) => member._id !== action.payload.user._id
+                ),
+              };
+              return card;
+            }),
+          };
+          return list;
+        }),
+      };
+
+    case "DELETE_CARD":
+      return {
+        ...state,
+        allLists: state.allLists.map((list) => {
+          if (list._id === action.payload.list_id) {
+            list = {
+              ...list,
+              cards: list.cards.filter(
+                (card) => card._id !== action.payload.card_id
+              ),
+            };
+          }
+          return list;
+        }),
+      };
     default:
       return state;
   }

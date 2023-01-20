@@ -15,6 +15,11 @@ const userReducer = (state, action) => {
         admin: action.payload,
       };
 
+    case "REQUEST_LOADING":
+      return {
+        ...state,
+        isLoading: true,
+      };
     case "LOADING_SUCCESS":
       return {
         ...state,
@@ -35,7 +40,7 @@ const userReducer = (state, action) => {
       };
 
     case "ADD_BOARD":
-      console.log("creating board");
+      // console.log("creating board");
       return {
         ...state,
         boards: [...state.boards, action.payload],
@@ -75,6 +80,37 @@ const userReducer = (state, action) => {
         }),
       };
 
+    case "ADD_MEMBER":
+      return {
+        ...state,
+        isLoading: false,
+        boards: state.boards.map((board) => {
+          if (board._id === action.payload.board_id) {
+            board = {
+              ...board,
+              members: [...board.members, { ...action.payload.user }],
+            };
+          }
+          return board;
+        }),
+      };
+
+    case "REMOVE_MEMBER":
+      return {
+        ...state,
+        isLoading: false,
+        boards: state.boards.map((board) => {
+          if (board._id === action.payload.board_id) {
+            board = {
+              ...board,
+              members: board.members.filter(
+                (member) => member._id !== action.payload.user._id
+              ),
+            };
+          }
+          return board;
+        }),
+      };
     default:
       return state;
   }

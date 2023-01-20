@@ -14,7 +14,7 @@ const ListContext = createContext();
 export const useListContext = () => useContext(ListContext);
 
 const ListDataProvider = ({ children }) => {
-  const { name, avatar, _id } = useAppContext();
+  const { name, avatar, _id, removeMemberFromUserContext } = useAppContext();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const loadAllLists = async (board_id) => {
@@ -64,10 +64,23 @@ const ListDataProvider = ({ children }) => {
   };
 
   const deleteListFromBoard = async (list_id, board_id) => {
-    /*
-      API CAll
-    */
-    dispatch({ type: "REMOVE_LIST", payload: list_id });
+    try {
+      const response = await axios.post(
+        "/board/list/delete",
+        { list_id, board_id },
+        {
+          headers: {
+            token: localStorage.getItem("auth-token"),
+          },
+        }
+      );
+      if (response.data.success) {
+        dispatch({ type: "REMOVE_LIST", payload: list_id });
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+    // dispatch({ type: "REMOVE_LIST", payload: list_id });
   };
 
   const createCard = async (title, list_id, board_id) => {
@@ -379,11 +392,78 @@ const ListDataProvider = ({ children }) => {
     // });
   };
 
-  const moveCard = async (fromList, toList, fromIndex, toIndex) => {
+  const moveCard = async (fromList, toList, fromIndex, toIndex, card_id) => {
+    if (fromList === toList && fromIndex === toIndex) {
+      return;
+    }
     dispatch({
       type: "MOVE_CARD",
       payload: { fromList, toList, fromIndex, toIndex },
     });
+    try {
+      // console.log("moving card...");
+      const response = await axios.put(
+        "/board/card/move",
+        { card_id, fromList, toList, fromIndex, toIndex },
+        {
+          headers: {
+            token: localStorage.getItem("auth-token"),
+          },
+        }
+      );
+      // if (response.data.success) {
+      // }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+  };
+
+  const removeMemberFromBoard = async (user, board_id) => {
+    try {
+      dispatch({ type: "REQUEST_LOADING" });
+      const response = await axios.post(
+        "/board/removeMember",
+        { user_id: user._id, board_id },
+        {
+          headers: {
+            token: localStorage.getItem("auth-token"),
+          },
+        }
+      );
+      if (response.data.success) {
+        removeMemberFromUserContext({ user, board_id });
+        dispatch({ type: "REMOVE_MEMBER_FROM_ALL_CARDS", payload: { user } });
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+    // removeMemberFromUserContext({ user, board_id });
+    // dispatch({
+    //   type: "REMOVE_MEMBER_FROM_ALL_CARDS",
+    //   payload: { user, board_id },
+    // });
+  };
+
+  const deleteCard = async (cover_id, card_id, list_id, board_id) => {
+    try {
+      const response = await axios.post(
+        "/board/card/delete",
+        { cover_id, card_id, list_id, board_id },
+        {
+          headers: {
+            token: localStorage.getItem("auth-token"),
+          },
+        }
+      );
+      if (response.data.success) {
+        console.log(response.data.message);
+        dispatch({ type: "DELETE_CARD", payload: { card_id, list_id } });
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+
+    // dispatch({ type: "DELETE_CARD", payload: { card_id, list_id } });
   };
 
   return (
@@ -407,6 +487,8 @@ const ListDataProvider = ({ children }) => {
         updateCover,
         removeCover,
         moveCard,
+        deleteCard,
+        removeMemberFromBoard,
       }}
     >
       {children}
