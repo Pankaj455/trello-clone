@@ -50,7 +50,7 @@ const Board = () => {
         <Header />
         <StyledBoard>
           <div className="row">
-            <Visibility />
+            {/* <Visibility /> */}
             <div className="members">
               <AvatarGroup size="sm" spacing={2}>
                 {board[0].members.map((member) => {

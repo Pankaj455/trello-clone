@@ -30,7 +30,7 @@ const addNewCard = async (req, res) => {
     ) {
       return res.status(403).json({
         success: false,
-        message: "Only board members can update list!",
+        message: "Only board members can create card!",
       });
     }
 
@@ -408,6 +408,68 @@ const moveCard = async (req, res) => {
   }
 };
 
+const deleteCard = async (req, res) => {
+  try {
+    const { board_id, list_id, cover_id, card_id } = req.body;
+    const list = await List.findById(list_id);
+    const card = await Card.findById(card_id);
+    const board = await Board.findById(board_id);
+
+    if (!card) {
+      res.status(404).json({
+        success: false,
+        message: "Card not found!",
+      });
+    }
+    if (!board) {
+      return res.status(404).json({
+        success: false,
+        message: "Board not found!",
+      });
+    }
+
+    if (!list) {
+      return res.status(404).json({
+        success: false,
+        message: "List not found!",
+      });
+    }
+
+    // checking if the user is member of the board or not
+    if (
+      !board.members.includes(req.user._id) &&
+      board.admin.toString() !== req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Only board members can delete card!",
+      });
+    }
+
+    if (cover_id) {
+      await cloudinary.v2.uploader.destroy(cover_id, (error) => {
+        if (error) {
+          throw new Error(error);
+        }
+      });
+    }
+
+    await card.remove();
+    list.cards = list.cards.filter((card) => card != card_id);
+    await list.save();
+
+    res.status(200).json({
+      success: true,
+      message: "card has been deleted successfully!",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   addNewCard,
   updateCard,
@@ -420,4 +482,5 @@ module.exports = {
   removeCover,
   updateCover,
   moveCard,
+  deleteCard,
 };

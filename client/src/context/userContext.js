@@ -81,26 +81,6 @@ const AppProvider = ({ children }) => {
     // dispatch({ type: "ADD_MEMBER", payload: { user, board_id } });
   };
 
-  // const removeMemberFromBoard = async (user, board_id) => {
-  //   try {
-  //     // dispatch({ type: "REQUEST_LOADING" });
-  //     const response = await axios.post(
-  //       "/board/removeMember",
-  //       { user_id: user._id, board_id },
-  //       {
-  //         headers: {
-  //           token: localStorage.getItem("auth-token"),
-  //         },
-  //       }
-  //     );
-  //     if (response.data.success) {
-  //       dispatch({ type: "REMOVE_MEMBER", payload: { user, board_id } });
-  //     }
-  //   } catch (error) {
-  //     console.log("Error: ", error);
-  //   }
-  //   // dispatch({ type: "REMOVE_MEMBER", payload: { user, board_id } });
-  // };
   const removeMemberFromUserContext = (payload) => {
     dispatch({ type: "REMOVE_MEMBER", payload });
   };

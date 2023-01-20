@@ -10,6 +10,7 @@ const {
   removeCover,
   updateCover,
   moveCard,
+  deleteCard,
 } = require("../controllers/card");
 const { addNewList, updateList, getAllLists } = require("../controllers/list");
 const isAuthenticated = require("../middlewares/auth");
@@ -31,5 +32,6 @@ router.post("/card/setCover", isAuthenticated, setCover);
 router.put("/card/updateCover", isAuthenticated, updateCover);
 router.put("/card/removeCover", isAuthenticated, removeCover);
 router.put("/card/move", isAuthenticated, moveCard);
+router.post("/card/delete", isAuthenticated, deleteCard);
 
 module.exports = router;

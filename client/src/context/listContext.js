@@ -435,6 +435,28 @@ const ListDataProvider = ({ children }) => {
     // });
   };
 
+  const deleteCard = async (cover_id, card_id, list_id, board_id) => {
+    try {
+      const response = await axios.post(
+        "/board/card/delete",
+        { cover_id, card_id, list_id, board_id },
+        {
+          headers: {
+            token: localStorage.getItem("auth-token"),
+          },
+        }
+      );
+      if (response.data.success) {
+        console.log(response.data.message);
+        dispatch({ type: "DELETE_CARD", payload: { card_id, list_id } });
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+
+    // dispatch({ type: "DELETE_CARD", payload: { card_id, list_id } });
+  };
+
   return (
     <ListContext.Provider
       value={{
@@ -456,6 +478,7 @@ const ListDataProvider = ({ children }) => {
         updateCover,
         removeCover,
         moveCard,
+        deleteCard,
         removeMemberFromBoard,
       }}
     >

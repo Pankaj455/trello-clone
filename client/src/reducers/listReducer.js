@@ -333,6 +333,21 @@ const listReducer = (state, action) => {
         }),
       };
 
+    case "DELETE_CARD":
+      return {
+        ...state,
+        allLists: state.allLists.map((list) => {
+          if (list._id === action.payload.list_id) {
+            list = {
+              ...list,
+              cards: list.cards.filter(
+                (card) => card._id !== action.payload.card_id
+              ),
+            };
+          }
+          return list;
+        }),
+      };
     default:
       return state;
   }
