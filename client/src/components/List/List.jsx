@@ -17,7 +17,6 @@ import { MdAdd } from "react-icons/md";
 import { useRef, useState } from "react";
 import Card from "../TodoCard/Card";
 import { useListContext } from "../../context/listContext";
-import { Droppable } from "react-beautiful-dnd";
 
 const List = ({ list, board_id }) => {
   const { updateListTitle, deleteListFromBoard, createCard } = useListContext();
@@ -115,81 +114,76 @@ const List = ({ list, board_id }) => {
           </MenuList>
         </Menu>
       </HStack>
-      <Droppable droppableId={list._id}>
-        {(provided) => (
-          <VStack gap={6} ref={provided.innerRef} {...provided.droppableProps}>
-            {cards?.map((card, index) => (
-              <Card
-                key={card._id}
-                index={index}
-                listId={list._id}
-                listTitle={list.title}
-                id={card._id}
-                title={card.title}
-                cover={card.cover}
-                members={card.members}
-                labels={card.labels}
-                comments={card.comments}
-                description={card.description ?? ""}
-              />
-            ))}
-            {provided.placeholder}
-            {addingCard ? (
-              <>
-                <form onSubmit={createNewCard}>
-                  <Textarea
-                    ref={cardTitleRef}
-                    defaultValue=""
-                    autoFocus
-                    placeholder="Enter a title..."
-                    mb={1}
-                    bg="white"
-                    fontFamily="'Poppins', sans-serif"
-                    fontSize="14px"
-                    resize="none"
-                    minHeight="70px"
-                  />
-                  <Button
-                    size="sm"
-                    role="button"
-                    type="submit"
-                    colorScheme="blue"
-                    loadingText="Adding"
-                    isLoading={isLoading}
-                  >
-                    Add Card
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    ml={2}
-                    onClick={() => setAddingCard(false)}
-                  >
-                    Cancel
-                  </Button>
-                </form>
-              </>
-            ) : (
-              <Button
-                leftIcon={<MdAdd />}
-                width="100%"
-                justifyContent="flex-start"
-                fontFamily="'Noto Sans', serif"
+      <VStack gap={6}>
+        {cards?.map((card, index) => (
+          <Card
+            key={card._id}
+            index={index}
+            listId={list._id}
+            listTitle={list.title}
+            id={card._id}
+            title={card.title}
+            cover={card.cover}
+            members={card.members}
+            labels={card.labels}
+            comments={card.comments}
+            description={card.description ?? ""}
+          />
+        ))}
+        {addingCard ? (
+          <>
+            <form onSubmit={createNewCard}>
+              <Textarea
+                ref={cardTitleRef}
+                defaultValue=""
+                autoFocus
+                placeholder="Enter a title..."
+                mb={1}
+                bg="white"
+                fontFamily="'Poppins', sans-serif"
                 fontSize="14px"
-                fontWeight="500"
-                color="#2F80ED"
-                bg="#DAE4FD"
-                _hover={{
-                  bg: "#DAE4FDc2",
-                }}
-                onClick={() => setAddingCard(true)}
+                resize="none"
+                minHeight="70px"
+              />
+              <Button
+                size="sm"
+                role="button"
+                type="submit"
+                colorScheme="blue"
+                loadingText="Adding"
+                isLoading={isLoading}
               >
-                Add {cards?.length === 0 ? "a" : "another"} card
+                Add Card
               </Button>
-            )}
-          </VStack>
+              <Button
+                size="sm"
+                variant="outline"
+                ml={2}
+                onClick={() => setAddingCard(false)}
+              >
+                Cancel
+              </Button>
+            </form>
+          </>
+        ) : (
+          <Button
+            leftIcon={<MdAdd />}
+            width="100%"
+            justifyContent="flex-start"
+            fontFamily="'Noto Sans', serif"
+            fontSize="14px"
+            fontWeight="500"
+            color="#2F80ED"
+            bg="#DAE4FD"
+            _hover={{
+              bg: "#DAE4FDc2",
+            }}
+            onClick={() => setAddingCard(true)}
+          >
+            Add {cards?.length === 0 ? "a" : "another"} card
+          </Button>
         )}
-      </Droppable>
+      </VStack>
     </Box>
   );
 };

@@ -396,10 +396,6 @@ const ListDataProvider = ({ children }) => {
     if (fromList === toList && fromIndex === toIndex) {
       return;
     }
-    dispatch({
-      type: "MOVE_CARD",
-      payload: { fromList, toList, fromIndex, toIndex },
-    });
     try {
       // console.log("moving card...");
       const response = await axios.put(
@@ -411,8 +407,12 @@ const ListDataProvider = ({ children }) => {
           },
         }
       );
-      // if (response.data.success) {
-      // }
+      if (response.data.success) {
+        dispatch({
+          type: "MOVE_CARD",
+          payload: { fromList, toList, fromIndex, toIndex },
+        });
+      }
     } catch (error) {
       console.log("Error: ", error);
     }

@@ -191,7 +191,12 @@ const CardModal = ({
                 mb="18px"
               >
                 in list &nbsp;
-                <Movecard listId={listId} index={index} listTitle={listTitle} />
+                <Movecard
+                  listId={listId}
+                  index={index}
+                  listTitle={listTitle}
+                  card_id={id}
+                />
               </Text>
               {description ? (
                 <CardDescription

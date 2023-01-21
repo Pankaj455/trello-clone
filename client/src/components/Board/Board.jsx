@@ -17,7 +17,6 @@ import Loader from "../Loader/Loader";
 import BoardMenu from "../BoardMenu/BoardMenu";
 import ListContainer from "../ListContainer/ListContainer";
 import useAuth from "../../hooks/useAuth";
-import { DragDropContext } from "react-beautiful-dnd";
 import { useListContext } from "../../context/listContext";
 import InviteCard from "../InviteToBoard/InviteCard";
 
@@ -30,19 +29,6 @@ const Board = () => {
   const board = boards.filter((board) => board._id === location.state);
 
   const { isAdmin } = useAuth();
-
-  const onDragEnd = (result) => {
-    // console.log(result);
-    if (result.destination) {
-      moveCard(
-        result.source.droppableId,
-        result.destination.droppableId,
-        result.source.index,
-        result.destination.index,
-        result.draggableId
-      );
-    }
-  };
 
   return !loadingUser ? (
     board[0]?.members.filter((member) => member._id === _id) ? (
@@ -77,9 +63,7 @@ const Board = () => {
             </div>
             <BoardMenu />
           </div>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <ListContainer boards={boards} />
-          </DragDropContext>
+          <ListContainer boards={boards} />
         </StyledBoard>
       </>
     ) : (
