@@ -3,7 +3,6 @@ import { Image, AvatarGroup, Avatar, Box } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 const Card = ({ board }) => {
-  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -22,7 +21,6 @@ const Card = ({ board }) => {
           transform: "scale(1.01)",
         },
       }}
-      onClick={() => navigate(`/boards/${board._id}`, { state: board._id })}
     >
       <Box
         sx={{

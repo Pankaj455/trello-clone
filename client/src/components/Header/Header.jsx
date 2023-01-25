@@ -10,15 +10,15 @@ import {
 } from "@chakra-ui/react";
 import { CgMenuGridR } from "react-icons/cg";
 import { BsCaretDownFill } from "react-icons/bs";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../context/userContext";
 
 const Header = () => {
   const { name, avatar, clearUser, boards } = useAppContext();
   const navigate = useNavigate();
-  const location = useLocation();
+  const { id: location } = useParams();
 
-  const board = boards.filter((board) => board._id === location.state);
+  const board = boards.filter((board) => board._id === location);
 
   const logout = () => {
     localStorage.removeItem("auth-token");

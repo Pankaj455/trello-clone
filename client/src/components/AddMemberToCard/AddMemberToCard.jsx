@@ -15,7 +15,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { MdPeople } from "react-icons/md";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useListContext } from "../../context/listContext";
 import { useAppContext } from "../../context/userContext";
 import useAuth from "../../hooks/useAuth";
@@ -24,8 +24,8 @@ const AddMemberToCard = ({ members, id, listId, children }) => {
   const { addMemberToCard, removeMemberFromCard } = useListContext();
   const { boards, _id: userId } = useAppContext();
 
-  const location = useLocation();
-  const board = boards.filter((board) => board._id === location.state);
+  const { id: location } = useParams();
+  const board = boards.filter((board) => board._id === location);
   const boardMembers = board[0].members;
   const memberIds = members.map((member) => member._id);
 

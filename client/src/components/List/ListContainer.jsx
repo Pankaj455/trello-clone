@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Input, Stack } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { MdAdd } from "react-icons/md";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import List from "./List";
 import axios from "../../axios";
 import { customScrollbar } from "../../utils/util";
@@ -13,14 +13,14 @@ const ListContainer = ({ boards }) => {
   const [addingList, setAddingList] = useState(false);
   const [loading, setLoading] = useState(false);
   const listInputRef = useRef(null);
-  const location = useLocation();
+  const { id: location } = useParams();
 
   // console.log(allLists);
   const lists = allLists;
   // console.log(lists);
 
   useEffect(() => {
-    loadAllLists(location.state);
+    loadAllLists(location);
     return () => {
       // console.log("unmounting");
       clearAllLists();
@@ -35,7 +35,7 @@ const ListContainer = ({ boards }) => {
     try {
       const response = await axios.post(
         "/board/list/new",
-        { title, board_id: location.state },
+        { title, board_id: location },
         {
           headers: {
             token: localStorage.getItem("auth-token"),
@@ -44,7 +44,7 @@ const ListContainer = ({ boards }) => {
       );
       if (response.data.success) {
         addNewList({
-          board_id: location.state,
+          board_id: location,
           newList: {
             _id: response.data._id,
             title,
@@ -83,12 +83,7 @@ const ListContainer = ({ boards }) => {
       {lists &&
         lists.map((li, index) => {
           return (
-            <List
-              key={li._id}
-              list={li}
-              index={index}
-              board_id={location.state}
-            />
+            <List key={li._id} list={li} index={index} board_id={location} />
           );
         })}
       <Box w="260px" height="fit-content" flexShrink={0}>

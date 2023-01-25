@@ -9,7 +9,7 @@ import {
   Image,
   Box,
 } from "@chakra-ui/react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import BoardMenu from "../BoardMenu/BoardMenu";
 import ListContainer from "../List/ListContainer";
@@ -20,10 +20,10 @@ import InviteCard from "../InviteToBoard/InviteCard";
 const Board = () => {
   const { _id, boards, loadingUser, loadUser, error } = useAppContext();
   const { moveCard } = useListContext();
-  const location = useLocation();
+  const { id: location } = useParams();
   const navigate = useNavigate();
 
-  const board = boards.filter((board) => board._id === location.state);
+  const board = boards.filter((board) => board._id === location);
 
   const { isAdmin } = useAuth();
 

@@ -5,8 +5,6 @@ import {
   DrawerBody,
   DrawerHeader,
   DrawerContent,
-  DrawerCloseButton,
-  useDisclosure,
   Divider,
   HStack,
   Text,
@@ -17,10 +15,10 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { FaUserCircle } from "react-icons/fa";
-import { MdAdd, MdDescription, MdEdit } from "react-icons/md";
+import { MdAdd, MdClose, MdDescription, MdEdit } from "react-icons/md";
 import axios from "../../axios";
 import { useAppContext } from "../../context/userContext";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import EditDescription from "./EditDescription";
 import { useListContext } from "../../context/listContext";
 import { formatDate } from "../../utils/util";
@@ -35,11 +33,11 @@ const BoardDrawer = ({ isOpen, onClose }) => {
     avatar,
   } = useAppContext();
   const { removeMemberFromBoard } = useListContext();
-  const location = useLocation();
+  const { id: location } = useParams();
 
   const [edit, setEdit] = useState(false);
 
-  const board = boards.filter((board) => board._id === location.state);
+  const board = boards.filter((board) => board._id === location);
   const { description, createdAt } = board[0];
 
   useEffect(() => {
@@ -64,189 +62,191 @@ const BoardDrawer = ({ isOpen, onClose }) => {
   }, []);
 
   return (
-    <>
-      <Drawer placement="right" size="xs" isOpen={isOpen} onClose={onClose}>
-        <DrawerContent style={{ top: 70 }}>
-          <DrawerCloseButton />
-          <DrawerHeader
-            fontSize={12}
-            fontWeight={600}
-            fontFamily="'Poppins', sans-serif"
-          >
+    <Drawer placement="right" size="xs" isOpen={isOpen} onClose={onClose}>
+      <DrawerContent style={{ top: 70 }}>
+        <DrawerHeader
+          fontSize={12}
+          fontWeight={600}
+          fontFamily="'Poppins', sans-serif"
+        >
+          <span style={{ display: "inline", marginRight: "auto" }}>
             Board Menu
-          </DrawerHeader>
-          <Divider backgroundColor="#E0E0E0" mb={3} />
-          <DrawerBody>
-            <HStack
+          </span>
+          <Button onClick={onClose} size="sm" variant="ghost" fontSize="16px">
+            <MdClose />
+          </Button>
+        </DrawerHeader>
+        <Divider backgroundColor="#E0E0E0" mb={3} />
+        <DrawerBody>
+          <HStack
+            fontSize={10}
+            fontWeight={500}
+            color="#BDBDBD"
+            fontFamily="'Poppins', sans-serif"
+            mb={3}
+          >
+            <FaUserCircle />
+            <Text>Made by</Text>
+          </HStack>
+          <HStack spacing={4} mb={3}>
+            <Avatar size="sm" name={name} src={avatar?.url} />
+            <VStack
+              fontFamily="'Poppins', sans-serif"
+              spacing={0}
+              alignItems="flex-start"
+            >
+              {userId === board[0].admin ? (
+                <Text fontSize={12} fontWeight={600} color="#333">
+                  {name}
+                </Text>
+              ) : (
+                admin && (
+                  <Text fontSize={12} fontWeight={600} color="#333">
+                    {admin.name}
+                  </Text>
+                )
+              )}
+              <Text fontSize={10} fontWeight={500} color="#bdbdbd">
+                {`created at ${formatDate(createdAt)}`}
+              </Text>
+            </VStack>
+          </HStack>
+          <ButtonGroup fontFamily="'Poppins', sans-serif" spacing={4} mb={3}>
+            <Button
+              variant="text"
+              size="xs"
+              leftIcon={<MdDescription />}
+              p={0}
+              color="#bdbdbd"
               fontSize={10}
               fontWeight={500}
-              color="#BDBDBD"
-              fontFamily="'Poppins', sans-serif"
-              mb={3}
+              cursor="auto"
             >
-              <FaUserCircle />
-              <Text>Made by</Text>
-            </HStack>
-            <HStack spacing={4} mb={3}>
-              <Avatar size="sm" name={name} src={avatar?.url} />
-              <VStack
-                fontFamily="'Poppins', sans-serif"
-                spacing={0}
-                alignItems="flex-start"
+              Description
+            </Button>
+            {userId === board[0].admin && (
+              <Button
+                variant="outline"
+                size="xs"
+                leftIcon={description ? <MdEdit /> : <MdAdd />}
+                fontSize={10}
+                fontWeight={500}
+                color="#828282"
+                onClick={() => setEdit(!edit)}
+                disabled={edit}
               >
-                {userId === board[0].admin ? (
-                  <Text fontSize={12} fontWeight={600} color="#333">
-                    {name}
-                  </Text>
-                ) : (
-                  admin && (
-                    <Text fontSize={12} fontWeight={600} color="#333">
-                      {admin.name}
-                    </Text>
-                  )
-                )}
-                <Text fontSize={10} fontWeight={500} color="#bdbdbd">
-                  {`created at ${formatDate(createdAt)}`}
-                </Text>
-              </VStack>
-            </HStack>
-            <ButtonGroup fontFamily="'Poppins', sans-serif" spacing={4} mb={3}>
+                {description ? "Edit" : "Add"}
+              </Button>
+            )}
+          </ButtonGroup>
+          <br />
+          {edit ? (
+            <EditDescription
+              setEdit={setEdit}
+              boardId={location}
+              description={description ?? ""}
+            />
+          ) : (
+            description && (
+              <pre
+                style={{
+                  fontFamily: "'Noto Sans', serif",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  lineHeight: "19px",
+                  whiteSpace: "pre-line",
+                  marginBottom: 20,
+                }}
+              >
+                {description}
+              </pre>
+            )
+          )}
+
+          {board.length && board[0].members.length > 0 && (
+            <Box>
               <Button
                 variant="text"
                 size="xs"
                 leftIcon={<MdDescription />}
                 p={0}
+                mb={2}
                 color="#bdbdbd"
+                fontFamily="'Poppins', sans-serif"
                 fontSize={10}
                 fontWeight={500}
                 cursor="auto"
               >
-                Description
+                Teams
               </Button>
-              {userId === board[0].admin && (
-                <Button
-                  variant="outline"
-                  size="xs"
-                  leftIcon={description ? <MdEdit /> : <MdAdd />}
-                  fontSize={10}
-                  fontWeight={500}
-                  color="#828282"
-                  onClick={() => setEdit(!edit)}
-                  disabled={edit}
-                >
-                  {description ? "Edit" : "Add"}
-                </Button>
-              )}
-            </ButtonGroup>
-            <br />
-            {edit ? (
-              <EditDescription
-                setEdit={setEdit}
-                boardId={location.state}
-                description={description ?? ""}
-              />
-            ) : (
-              description && (
-                <pre
-                  style={{
-                    fontFamily: "'Noto Sans', serif",
-                    fontSize: 14,
-                    fontWeight: 500,
-                    lineHeight: "19px",
-                    whiteSpace: "pre-line",
-                    marginBottom: 20,
-                  }}
-                >
-                  {description}
-                </pre>
-              )
-            )}
-
-            {board.length && board[0].members.length > 0 && (
               <Box>
-                <Button
-                  variant="text"
-                  size="xs"
-                  leftIcon={<MdDescription />}
-                  p={0}
-                  mb={2}
-                  color="#bdbdbd"
-                  fontFamily="'Poppins', sans-serif"
-                  fontSize={10}
-                  fontWeight={500}
-                  cursor="auto"
-                >
-                  Teams
-                </Button>
-                <Box>
-                  {board[0].admin !== userId && admin && (
-                    <HStack alignItems="center" mb={5}>
-                      <HStack flexGrow={1} spacing={4}>
-                        <Avatar size="xs" name={name} src={avatar?.url} />
-                        <Text
-                          fontSize={11}
-                          fontWeight={500}
-                          fontFamily="'Poppins', sans-serif"
-                        >
-                          {admin.name}
-                        </Text>
-                      </HStack>
+                {board[0].admin !== userId && admin && (
+                  <HStack alignItems="center" mb={5}>
+                    <HStack flexGrow={1} spacing={4}>
+                      <Avatar size="xs" name={name} src={avatar?.url} />
                       <Text
-                        fontFamily="'Poppins', sans-serif"
                         fontSize={11}
                         fontWeight={500}
-                        color="#bdbdbd"
+                        fontFamily="'Poppins', sans-serif"
                       >
-                        Admin
+                        {admin.name}
                       </Text>
                     </HStack>
-                  )}
-                  {board[0].members.map((member) => {
-                    return (
-                      <Box key={member._id}>
-                        {member._id !== userId && (
-                          <HStack key={member._id} alignItems="center" mb={5}>
-                            <HStack flexGrow={1} spacing={4}>
-                              <Avatar
-                                size="xs"
-                                name={member.name}
-                                src={member.avatar?.url}
-                              />
-                              <Text
-                                fontSize={11}
-                                fontWeight={500}
-                                fontFamily="'Poppins', sans-serif"
-                              >
-                                {member.name}
-                              </Text>
-                            </HStack>
-                            {board[0].admin === userId && (
-                              <Button
-                                size="xs"
-                                variant="outline"
-                                colorScheme="orange"
-                                onClick={() =>
-                                  removeMemberFromBoard(
-                                    { _id: member._id, name: member.name },
-                                    board[0]._id
-                                  )
-                                }
-                              >
-                                Remove
-                              </Button>
-                            )}
+                    <Text
+                      fontFamily="'Poppins', sans-serif"
+                      fontSize={11}
+                      fontWeight={500}
+                      color="#bdbdbd"
+                    >
+                      Admin
+                    </Text>
+                  </HStack>
+                )}
+                {board[0].members.map((member) => {
+                  return (
+                    <Box key={member._id}>
+                      {member._id !== userId && (
+                        <HStack key={member._id} alignItems="center" mb={5}>
+                          <HStack flexGrow={1} spacing={4}>
+                            <Avatar
+                              size="xs"
+                              name={member.name}
+                              src={member.avatar?.url}
+                            />
+                            <Text
+                              fontSize={11}
+                              fontWeight={500}
+                              fontFamily="'Poppins', sans-serif"
+                            >
+                              {member.name}
+                            </Text>
                           </HStack>
-                        )}
-                      </Box>
-                    );
-                  })}
-                </Box>
+                          {board[0].admin === userId && (
+                            <Button
+                              size="xs"
+                              variant="outline"
+                              colorScheme="orange"
+                              onClick={() =>
+                                removeMemberFromBoard(
+                                  { _id: member._id, name: member.name },
+                                  board[0]._id
+                                )
+                              }
+                            >
+                              Remove
+                            </Button>
+                          )}
+                        </HStack>
+                      )}
+                    </Box>
+                  );
+                })}
               </Box>
-            )}
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-    </>
+            </Box>
+          )}
+        </DrawerBody>
+      </DrawerContent>
+    </Drawer>
   );
 };
 

@@ -6,6 +6,7 @@ import Loader from "../Loader/Loader";
 import { Box, Button, Flex, useDisclosure } from "@chakra-ui/react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useAppContext } from "../../context/userContext";
+import { Link } from "react-router-dom";
 
 const AllBoards = () => {
   const { loadUser, boards, loadingUser } = useAppContext();
@@ -62,7 +63,11 @@ const AllBoards = () => {
               </Flex>
               <Flex gap="1.2em" flexWrap="wrap">
                 {boards.map((board) => {
-                  return <Card key={board._id} board={board} />;
+                  return (
+                    <Link key={board._id} to={`/boards/${board._id}`}>
+                      <Card board={board} />
+                    </Link>
+                  );
                 })}
               </Flex>
             </Box>

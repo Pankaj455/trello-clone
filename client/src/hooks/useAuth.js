@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useAppContext } from "../context/userContext";
 
 const useAuth = () => {
   const { boards, _id, loadingUser, loadUser } = useAppContext();
-  const location = useLocation();
+
+  const { id: location } = useParams();
 
   useEffect(() => {
     if (loadingUser) {
@@ -13,7 +14,7 @@ const useAuth = () => {
   }, []);
 
   let adminId;
-  const board = boards.filter((board) => board._id === location.state);
+  const board = boards.filter((board) => board._id === location);
   if (board.length > 0) {
     adminId =
       typeof board[0].admin === "string" ? board[0].admin : board[0].admin._id;
