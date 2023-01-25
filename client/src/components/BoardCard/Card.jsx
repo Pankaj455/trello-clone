@@ -1,18 +1,63 @@
 import React from "react";
-import { StyledCard } from "./card.styled.";
-import { Image, AvatarGroup, Avatar } from "@chakra-ui/react";
+import { Image, AvatarGroup, Avatar, Box } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 const Card = ({ board }) => {
   const navigate = useNavigate();
   return (
-    <StyledCard
+    <Box
+      sx={{
+        width: "243px",
+        minHeight: "243px",
+        background: "#fff",
+        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.05)",
+        borderRadius: "0.75em",
+        padding: "0.75em",
+        cursor: "pointer",
+        flexBasis: "243px",
+        transition: "all 0.3s",
+
+        "&:hover": {
+          boxShadow: "0px 4px 18px rgba(0, 0, 0, 0.12)",
+          transform: "scale(1.01)",
+        },
+      }}
       onClick={() => navigate(`/boards/${board._id}`, { state: board._id })}
     >
-      <div className="cover">
-        {board.cover && <Image src={board.cover.url} fit alt="board-cover" />}
-      </div>
-      <h3 className="title">{board.title}</h3>
+      <Box
+        sx={{
+          height: "130px",
+          marginBottom: "16px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "rgb(201, 217, 208)",
+          background:
+            "linear-gradient(90deg, rgba(201, 217, 208, 1) 0%,rgba(219, 243, 229, 1) 33%,rgba(213, 220, 217, 1) 65%)",
+          borderRadius: "8px",
+          overflow: "hidden",
+        }}
+      >
+        {board.cover && (
+          <Image
+            src={board.cover.url}
+            height="100%"
+            width="100%"
+            fit
+            alt="board-cover"
+          />
+        )}
+      </Box>
+      <h3
+        style={{
+          fontSize: "16px",
+          fontFamily: '"Noto Sans", serif',
+          fontWeight: 500,
+          marginBottom: "1.5em",
+        }}
+      >
+        {board.title}
+      </h3>
       <AvatarGroup
         size="sm"
         max={3}
@@ -22,7 +67,7 @@ const Card = ({ board }) => {
           return <Avatar key={member._id} name={member.name} />;
         })}
       </AvatarGroup>
-    </StyledCard>
+    </Box>
   );
 };
 

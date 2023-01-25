@@ -1,6 +1,5 @@
 import React from "react";
 import logo from "../../assets/updated-logo-bold.svg";
-import { StyledHeader } from "./header.styled";
 import {
   Button,
   Menu,
@@ -11,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { CgMenuGridR } from "react-icons/cg";
 import { BsCaretDownFill } from "react-icons/bs";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../context/userContext";
 
 const Header = () => {
@@ -33,11 +32,27 @@ const Header = () => {
 
   const pathArr = window.location.pathname.split("/");
   return (
-    <StyledHeader>
-      <img src={logo} alt="Crello Logo" className="logo" />
+    <header>
+      <Link to="/boards">
+        <img src={logo} alt="Crello Logo" className="logo" />
+      </Link>
       {pathArr.length === 3 && (
-        <div className="board">
-          <h1>{board[0].title} | </h1>
+        <div
+          style={{
+            display: "flex",
+            flexGrow: 1,
+            marginLeft: "4em",
+            alignItems: "center",
+          }}
+        >
+          <h1
+            style={{
+              fontSize: "18px",
+              fontWeight: 500,
+            }}
+          >
+            {board[0].title} |{" "}
+          </h1>
           <Button
             leftIcon={<CgMenuGridR />}
             size="sm"
@@ -49,7 +64,13 @@ const Header = () => {
           </Button>
         </div>
       )}
-      <div className="profile">
+      <div
+        style={{
+          display: "flex",
+          marginLeft: "auto",
+          alignItems: "center",
+        }}
+      >
         {
           <Avatar
             size="sm"
@@ -74,7 +95,7 @@ const Header = () => {
           </MenuList>
         </Menu>
       </div>
-    </StyledHeader>
+    </header>
   );
 };
 

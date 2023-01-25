@@ -1,7 +1,32 @@
-import styled from "styled-components";
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-export const StyledLoader = styled.div`
-  img.fadeOut {
+body{
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+img{
+    max-width: 100%;
+    height: auto;
+}
+
+header{
+  display: flex;
+  align-items: center;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  padding: 1em 1.5em;
+}
+.logo{
+    width: 8rem;
+    height: auto;
+}
+
+img.fadeOut {
     -webkit-animation-name: fadeout;
     animation-name: fadeout;
     -webkit-animation-duration: 0.5s;
@@ -27,4 +52,3 @@ export const StyledLoader = styled.div`
       scale: 1;
     }
   }
-`;

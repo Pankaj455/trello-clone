@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import FormContainer from "./components/Authentication/FormContainer";
-import GlobalStyle from "./GlobalStyle";
 import AllBoards from "./components/AllBoards/AllBoards";
 import ProtectedRoutes from "./ProtectedRoutes";
 import MyProfile from "./components/MyProfile/MyProfile";
@@ -14,7 +13,6 @@ function App() {
       <AppProvider>
         <ListDataProvider>
           <BrowserRouter>
-            <GlobalStyle />
             <Routes>
               <Route path="/" element={<FormContainer />}>
                 <Route path="/auth" element={<FormContainer />} />
