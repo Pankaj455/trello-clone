@@ -32,3 +32,14 @@ export const months = [
   "November",
   "December",
 ];
+
+export const formatDate = (date) => {
+  if (date) {
+    date = new Date(date);
+    const formattedDate = new Intl.DateTimeFormat("en-us", {
+      dateStyle: "full",
+    }).format(date);
+    return formattedDate.split(", ").slice(1).join(", ");
+  }
+  return date;
+};

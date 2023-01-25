@@ -30,14 +30,14 @@ import {
 } from "@chakra-ui/react";
 import { AiOutlineCheck, AiOutlineDelete } from "react-icons/ai";
 import { MdClose, MdImage, MdPeople } from "react-icons/md";
-import CardDescription from "../CardDescription/CardDescription";
+import CardDescription from "./CardDescription";
 import { useState, useRef } from "react";
-import CommentInput from "../CommentInput/CommentInput";
+import CommentInput from "./Comment/CommentInput";
 import { FaUserCircle } from "react-icons/fa";
 import { useListContext } from "../../context/listContext";
 import AddMemberToCard from "../AddMemberToCard/AddMemberToCard";
 import { useEffect } from "react";
-import Movecard from "../Movecard/Movecard";
+import Movecard from "./Movecard";
 import useAuth from "../../hooks/useAuth";
 import { useParams } from "react-router-dom";
 

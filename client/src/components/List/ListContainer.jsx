@@ -2,7 +2,7 @@ import { Box, Button, Flex, Input, Stack } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { useLocation } from "react-router-dom";
-import List from "../List/List";
+import List from "./List";
 import axios from "../../axios";
 import { customScrollbar } from "../../utils/util";
 import { useListContext } from "../../context/listContext";

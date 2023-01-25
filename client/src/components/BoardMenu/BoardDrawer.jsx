@@ -21,8 +21,9 @@ import { MdAdd, MdDescription, MdEdit } from "react-icons/md";
 import axios from "../../axios";
 import { useAppContext } from "../../context/userContext";
 import { useLocation } from "react-router-dom";
-import EditDescription from "../EditDescription/EditDescription";
+import EditDescription from "./EditDescription";
 import { useListContext } from "../../context/listContext";
+import { formatDate } from "../../utils/util";
 
 const BoardDrawer = ({ isOpen, onClose }) => {
   const {
@@ -39,7 +40,7 @@ const BoardDrawer = ({ isOpen, onClose }) => {
   const [edit, setEdit] = useState(false);
 
   const board = boards.filter((board) => board._id === location.state);
-  const { description } = board[0];
+  const { description, createdAt } = board[0];
 
   useEffect(() => {
     if (!admin && board[0].admin !== userId) {
@@ -105,7 +106,7 @@ const BoardDrawer = ({ isOpen, onClose }) => {
                   )
                 )}
                 <Text fontSize={10} fontWeight={500} color="#bdbdbd">
-                  on 24th October, 2022
+                  {`created at ${formatDate(createdAt)}`}
                 </Text>
               </VStack>
             </HStack>

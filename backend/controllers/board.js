@@ -9,7 +9,7 @@ const createBoard = async (req, res) => {
     const { title, visibility, cover } = req.body;
     const newBoardData = {
       title,
-      visibility: visibility === false ? false : true,
+      visibility: !visibility ? false : true,
       admin: req.user._id,
     };
 
