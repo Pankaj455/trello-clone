@@ -1,6 +1,7 @@
 import reducer from "../reducers/listReducer";
 import axios from "../axios";
 import { useAppContext } from "./userContext";
+import { useToast } from "@chakra-ui/react";
 
 const { createContext, useContext, useReducer } = require("react");
 
@@ -16,6 +17,17 @@ export const useListContext = () => useContext(ListContext);
 const ListDataProvider = ({ children }) => {
   const { name, avatar, _id, removeMemberFromUserContext } = useAppContext();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const toast = useToast();
+
+  const showPopup = (id, status, description) => {
+    toast({
+      id,
+      position: "bottom-left",
+      description,
+      status,
+      duration: 3500,
+    });
+  };
 
   const loadAllLists = async (board_id) => {
     try {
@@ -56,8 +68,6 @@ const ListDataProvider = ({ children }) => {
       if (response.data.success) {
         dispatch({ type: "UPDATE_LIST_TITLE", payload: { title, list_id } });
       }
-      // dispatch({ type: "UPDATE_LIST_TITLE", payload: { title, list_id } });
-      // console.log("title updated");
     } catch (error) {
       console.log("Error", error);
     }
@@ -76,11 +86,11 @@ const ListDataProvider = ({ children }) => {
       );
       if (response.data.success) {
         dispatch({ type: "REMOVE_LIST", payload: list_id });
+        showPopup("delete-list", "success", response.data.message);
       }
     } catch (error) {
       console.log("Error: ", error);
     }
-    // dispatch({ type: "REMOVE_LIST", payload: list_id });
   };
 
   const createCard = async (title, list_id, board_id) => {
@@ -99,7 +109,6 @@ const ListDataProvider = ({ children }) => {
         }
       );
       if (response.data.success) {
-        // console.log(response.data.card);
         dispatch({
           type: "CREATE_NEW_CARD",
           payload: { card: response.data.card, list_id },
@@ -108,43 +117,15 @@ const ListDataProvider = ({ children }) => {
     } catch (error) {
       console.log("Error: ", error);
     }
-    // dispatch({ type: "CREATE_NEW_CARD", payload: { title, list_id } });
   };
 
-  const updateCardTitle = async (id, title, list_id) => {
+  const updateCard = async ({ id, title, description, list_id }) => {
     try {
       const response = await axios.put(
         "/board/card/update",
         {
           card_id: id,
           title,
-        },
-        {
-          headers: {
-            token: localStorage.getItem("auth-token"),
-          },
-        }
-      );
-      if (response.data.success) {
-        // console.log(response.data.card);
-        dispatch({
-          type: "UPDATE_CARD_TITLE",
-          payload: { id, title, list_id },
-        });
-      }
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-
-    // dispatch({ type: "UPDATE_CARD_TITLE", payload: { id, title, list_id } });
-  };
-
-  const updateCardDescription = async (id, description, list_id) => {
-    try {
-      const response = await axios.put(
-        "/board/card/update",
-        {
-          card_id: id,
           description,
         },
         {
@@ -155,18 +136,13 @@ const ListDataProvider = ({ children }) => {
       );
       if (response.data.success) {
         dispatch({
-          type: "UPDATE_CARD_DESCRIPTION",
-          payload: { id, description, list_id },
+          type: "UPDATE_CARD",
+          payload: { id, title, description, list_id },
         });
       }
     } catch (error) {
       console.log("Error: ", error);
     }
-
-    // dispatch({
-    //   type: "UPDATE_CARD_DESCRIPTION",
-    //   payload: { id, description, list_id },
-    // });
   };
 
   const createNewComment = async (newComment, card_id, list_id) => {
@@ -222,11 +198,6 @@ const ListDataProvider = ({ children }) => {
     } catch (error) {
       console.log("Error: ", error);
     }
-
-    // dispatch({
-    //   type: "DELETE_COMMENT",
-    //   payload: { comment_id, list_id, card_id },
-    // });
   };
 
   const loadComments = async (list_id, card_id) => {
@@ -270,15 +241,11 @@ const ListDataProvider = ({ children }) => {
           type: "ADD_MEMBER_TO_CARD",
           payload: { list_id, card_id, newMember },
         });
+        showPopup("add-member", "success", "Member added successfully");
       }
     } catch (error) {
       console.log("Error: ", error);
     }
-
-    // dispatch({
-    //   type: "ADD_MEMBER_TO_CARD",
-    //   payload: { list_id, card_id, newMember },
-    // });
   };
 
   const removeMemberFromCard = async (card_id, member_id, list_id) => {
@@ -300,15 +267,11 @@ const ListDataProvider = ({ children }) => {
           type: "REMOVE_MEMBER_FROM_CARD",
           payload: { list_id, card_id, member_id },
         });
+        showPopup("remove-member", "success", response.data.message);
       }
     } catch (error) {
       console.log("Error: ", error);
     }
-
-    // dispatch({
-    //   type: "REMOVE_MEMBER_FROM_CARD",
-    //   payload: { list_id, card_id, member_id },
-    // });
   };
 
   const setCover = async (cover, card_id, list_id) => {
@@ -328,14 +291,12 @@ const ListDataProvider = ({ children }) => {
           type: "SET_CARD_COVER",
           payload: { card_id, cover: response.data.cover, list_id },
         });
+        showPopup("set-cover", "success", "cover is updated successfully");
       }
     } catch (error) {
       console.log("Error: ", error);
+      alert("Something went wrong. Try again later!");
     }
-    // dispatch({
-    //   type: "SET_CARD_COVER",
-    //   payload: { card_id, cover: { url: cover }, list_id },
-    // });
   };
 
   const removeCover = async (cover, card_id, list_id) => {
@@ -355,14 +316,12 @@ const ListDataProvider = ({ children }) => {
           type: "REMOVE_CARD_COVER",
           payload: { card_id, list_id },
         });
+        showPopup("remove-cover", "success", "cover is removed successfully");
       }
     } catch (error) {
       console.log("Error: ", error);
+      alert("Something went wrong. Try again later!");
     }
-    // dispatch({
-    //   type: "REMOVE_CARD_COVER",
-    //   payload: { card_id, list_id },
-    // });
   };
 
   const updateCover = async (prev_cover_id, cover, card_id, list_id) => {
@@ -382,14 +341,12 @@ const ListDataProvider = ({ children }) => {
           type: "SET_CARD_COVER",
           payload: { card_id, cover: response.data.cover, list_id },
         });
+        showPopup("update-cover", "success", "cover is updated successfully");
       }
     } catch (error) {
       console.log("Error: ", error);
+      alert("Something went wrong. Try again later!");
     }
-    // dispatch({
-    //   type: "SET_CARD_COVER",
-    //   payload: { card_id, cover: { url: cover }, list_id },
-    // });
   };
 
   const moveCard = async (fromList, toList, fromIndex, toIndex, card_id) => {
@@ -397,7 +354,6 @@ const ListDataProvider = ({ children }) => {
       return;
     }
     try {
-      // console.log("moving card...");
       const response = await axios.put(
         "/board/card/move",
         { card_id, fromList, toList, fromIndex, toIndex },
@@ -420,7 +376,6 @@ const ListDataProvider = ({ children }) => {
 
   const removeMemberFromBoard = async (user, board_id) => {
     try {
-      dispatch({ type: "REQUEST_LOADING" });
       const response = await axios.post(
         "/board/removeMember",
         { user_id: user._id, board_id },
@@ -433,15 +388,13 @@ const ListDataProvider = ({ children }) => {
       if (response.data.success) {
         removeMemberFromUserContext({ user, board_id });
         dispatch({ type: "REMOVE_MEMBER_FROM_ALL_CARDS", payload: { user } });
+        showPopup("remove-member", "success", response.data.message);
+      } else {
       }
     } catch (error) {
+      dispatch({ type: "LOADING_FAILURE", payload: error.message });
       console.log("Error: ", error);
     }
-    // removeMemberFromUserContext({ user, board_id });
-    // dispatch({
-    //   type: "REMOVE_MEMBER_FROM_ALL_CARDS",
-    //   payload: { user, board_id },
-    // });
   };
 
   const deleteCard = async (cover_id, card_id, list_id, board_id) => {
@@ -456,14 +409,12 @@ const ListDataProvider = ({ children }) => {
         }
       );
       if (response.data.success) {
-        console.log(response.data.message);
         dispatch({ type: "DELETE_CARD", payload: { card_id, list_id } });
+        showPopup("delete-card", "success", response.data.message);
       }
     } catch (error) {
       console.log("Error: ", error);
     }
-
-    // dispatch({ type: "DELETE_CARD", payload: { card_id, list_id } });
   };
 
   return (
@@ -476,8 +427,7 @@ const ListDataProvider = ({ children }) => {
         updateListTitle,
         deleteListFromBoard,
         createCard,
-        updateCardTitle,
-        updateCardDescription,
+        updateCard,
         createNewComment,
         loadComments,
         removeComment,

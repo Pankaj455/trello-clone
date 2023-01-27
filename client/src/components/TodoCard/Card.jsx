@@ -12,7 +12,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { AiOutlinePlus } from "react-icons/ai";
-import AddMemberToCard from "../AddMemberToCard/AddMemberToCard";
+import AddMemberToCard from "../CardModal/AddMemberToCard";
 import CardModal from "../CardModal/CardModal";
 import useAuth from "../../hooks/useAuth";
 

@@ -14,7 +14,6 @@ import {
   Avatar,
   VStack,
 } from "@chakra-ui/react";
-import { MdPeople } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { useListContext } from "../../context/listContext";
 import { useAppContext } from "../../context/userContext";

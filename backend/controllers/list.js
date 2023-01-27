@@ -126,7 +126,10 @@ const deleteList = async (req, res) => {
             card.cover.public_id,
             (error) => {
               if (error) {
-                throw new Error(error);
+                return res.status(500).json({
+                  status: false,
+                  message: error,
+                });
               }
             }
           );

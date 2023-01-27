@@ -35,7 +35,7 @@ import { useState, useRef } from "react";
 import CommentInput from "./Comment/CommentInput";
 import { FaUserCircle } from "react-icons/fa";
 import { useListContext } from "../../context/listContext";
-import AddMemberToCard from "../AddMemberToCard/AddMemberToCard";
+import AddMemberToCard from "./AddMemberToCard";
 import { useEffect } from "react";
 import Movecard from "./Movecard";
 import useAuth from "../../hooks/useAuth";
@@ -55,7 +55,7 @@ const CardModal = ({
   cover,
 }) => {
   const {
-    updateCardTitle,
+    updateCard,
     loadComments,
     setCover,
     updateCover,
@@ -88,7 +88,7 @@ const CardModal = ({
     loadCardData();
   }, []);
 
-  const updateTitle = (e) => {
+  const updateTitle = async (e) => {
     e.preventDefault();
     const cardTitle = titleRef.current.value.trim();
     if (!cardTitle) return;
@@ -96,7 +96,7 @@ const CardModal = ({
       setIsEditingTitle(false);
       return;
     }
-    updateCardTitle(id, cardTitle, listId);
+    await updateCard({ id, title: cardTitle, list_id: listId });
     setIsEditingTitle(false);
   };
 
@@ -171,7 +171,7 @@ const CardModal = ({
                   </Button>
                 </form>
               ) : (
-                <Flex onClick={() => setIsEditingTitle(true)} cursor="text">
+                <Flex onClick={(e) => setIsEditingTitle(true)} cursor="text">
                   <Text
                     fontFamily="'Noto Sans', serif"
                     fontWeight="400"

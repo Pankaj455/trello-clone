@@ -1,13 +1,17 @@
 import { Flex, Image } from "@chakra-ui/react";
 import logo from "../../assets/Logo-small.svg";
 
-const Loader = () => {
+const Loader = ({ height, width }) => {
   return (
-    <Flex height="100vh" justifyContent="center" alignItems="center">
+    <Flex
+      height={height || "100vh"}
+      justifyContent="center"
+      alignItems="center"
+    >
       <div>
         <Image
           className="fadeOut"
-          boxSize="100px"
+          boxSize={width || "100px"}
           src={logo}
           alt="Getting Board..."
         />

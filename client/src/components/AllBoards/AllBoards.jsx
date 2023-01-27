@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Card from "../BoardCard/Card";
+import Card from "./Card";
 import CreateBoard from "../CreateBoard/CreateBoard";
 import Header from "../Header/Header";
 import Loader from "../Loader/Loader";
@@ -9,19 +9,16 @@ import { useAppContext } from "../../context/userContext";
 import { Link } from "react-router-dom";
 
 const AllBoards = () => {
-  const { loadUser, boards, loadingUser } = useAppContext();
+  const { loadUser, boards, loadingUser, isLoading } = useAppContext();
   const { isOpen, onClose, onOpen } = useDisclosure();
-  // const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
-    if (loadingUser) {
-      loadUser();
-    }
+    loadUser();
   }, []);
 
   return (
     <>
-      {!loadingUser ? (
+      {!isLoading ? (
         <>
           <Header />
           <section

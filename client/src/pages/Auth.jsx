@@ -8,19 +8,20 @@ import {
   TabPanel,
   Text,
 } from "@chakra-ui/react";
-import Login from "./Login";
-import SignUp from "./SignUp";
+import Login from "../components/Authentication/Login";
+import SignUp from "../components/Authentication/SignUp";
 import { useNavigate } from "react-router-dom";
+import Loader from "../components/Loader/Loader";
 
-const FormContainer = () => {
+const Auth = () => {
   const navigate = useNavigate();
-
+  const token = localStorage.getItem("auth-token");
   useEffect(() => {
-    if (localStorage.getItem("auth-token")) {
+    if (token) {
       navigate("/boards");
     }
-  }, [navigate]);
-  return (
+  }, []);
+  return !token ? (
     <Container
       maxW="450px"
       color="black"
@@ -47,7 +48,9 @@ const FormContainer = () => {
         </TabPanels>
       </Tabs>
     </Container>
+  ) : (
+    <Loader />
   );
 };
 
-export default FormContainer;
+export default Auth;

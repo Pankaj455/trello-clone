@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Card = require("../models/Card");
 const cloudinary = require("cloudinary");
 
 const getProfile = async (req, res) => {
@@ -14,7 +15,7 @@ const getProfile = async (req, res) => {
         populate: {
           path: "members",
           model: "User",
-          select: "name",
+          select: "name avatar",
         },
       });
     }
@@ -122,18 +123,87 @@ const login = async (req, res) => {
 const uploadAvatar = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    const cloud = await cloudinary.v2.uploader.upload(req.body.image);
+    const cloud = await cloudinary.v2.uploader.upload(
+      req.body.image,
+      {
+        folder: "profiles",
+      },
+      (error) => {
+        if (error) {
+          return res.status(500).json({
+            success: false,
+            message: error,
+          });
+        }
+      }
+    );
 
     user.avatar = {
       public_id: cloud.public_id,
       url: cloud.secure_url,
     };
 
-    user.save();
+    await user.save();
 
     res.status(200).json({
       success: true,
+      avatar: user.avatar,
       message: "avatar uploaded successfully!",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const updateProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const { public_id, image, name } = req.body;
+    let cloud;
+    if (public_id) {
+      cloud = await cloudinary.v2.uploader.destroy(public_id, (error) => {
+        if (error) {
+          return res.status(500).json({
+            success: false,
+            message: error,
+          });
+        }
+      });
+    }
+    if (image) {
+      cloud = await cloudinary.v2.uploader.upload(
+        image,
+        {
+          folder: "profiles",
+        },
+        (error) => {
+          if (error) {
+            res.status(500).json({
+              success: false,
+              message: error,
+            });
+          }
+        }
+      );
+      user.avatar = {
+        public_id: cloud.public_id,
+        url: cloud.secure_url,
+      };
+    } else {
+      user.avatar = undefined;
+    }
+
+    if (name) user.name = name;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      avatar: user.avatar,
+      name: user.name,
+      message: `avatar ${image ? "updated" : "removed"} successfully!`,
     });
   } catch (error) {
     res.status(500).json({
@@ -149,11 +219,28 @@ const getUsers = async (req, res) => {
       {
         name: { $regex: req.params.name, $options: "i" },
       },
-      { name: 1 }
+      { name: 1, avatar: 1 }
     );
     res.status(200).json({
       success: true,
       users,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const getAllCards = async (req, res) => {
+  try {
+    const cards = await Card.find(
+      { members: req.user._id },
+      { cover: 1, labels: 1, title: 1 }
+    );
+    res.status(200).json({
+      success: true,
+      cards,
     });
   } catch (error) {
     res.status(500).json({
@@ -170,4 +257,6 @@ module.exports = {
   login,
   uploadAvatar,
   getUsers,
+  getAllCards,
+  updateProfile,
 };

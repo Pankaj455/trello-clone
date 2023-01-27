@@ -23,7 +23,7 @@ const Header = () => {
   const logout = () => {
     localStorage.removeItem("auth-token");
     clearUser();
-    navigate("/auth");
+    navigate("/");
   };
 
   const myProfile = () => {
@@ -71,21 +71,19 @@ const Header = () => {
           alignItems: "center",
         }}
       >
-        {
-          <Avatar
-            size="sm"
-            name={name}
-            // src='https://bit.ly/dan-abramov'
-            src={avatar ? avatar.url : ""}
-          />
-        }
+        {avatar ? (
+          <Avatar size="sm" name={name} src={avatar ? avatar.url : ""} />
+        ) : (
+          <>
+            <Avatar size="sm" name={name} />
+          </>
+        )}
         <Menu>
           <MenuButton
             as={Button}
             size="sm"
             bg="#fff"
             rightIcon={<BsCaretDownFill />}
-            textTransform="capitalize"
           >
             {name}
           </MenuButton>

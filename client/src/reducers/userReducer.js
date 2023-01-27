@@ -8,14 +8,29 @@ const userReducer = (state, action) => {
         avatar: action.payload.avatar,
         boards: action.payload.boards,
       };
+    case "UPDATE_AVATAR":
+      return {
+        ...state,
+        avatar: action.payload,
+      };
+    case "UPDATE_PROFILE":
+      return {
+        ...state,
+        name: action.payload,
+      };
 
     case "GET_ADMIN":
       return {
         ...state,
         admin: action.payload,
       };
+    case "GET_USER_CARDS":
+      return {
+        ...state,
+        cards: action.payload,
+      };
 
-    case "REQUEST_LOADING":
+    case "LOADING_REQUEST":
       return {
         ...state,
         isLoading: true,
@@ -24,12 +39,15 @@ const userReducer = (state, action) => {
       return {
         ...state,
         loadingUser: false,
+        isLoading: false,
+        error: "",
       };
 
     case "LOADING_FAILURE":
       return {
         ...state,
         loadingUser: false,
+        isLoading: false,
         error: action.payload,
       };
 

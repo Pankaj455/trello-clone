@@ -253,9 +253,18 @@ const setCover = async (req, res) => {
       });
     }
 
-    const cloud = await cloudinary.v2.uploader.upload(cover, {
-      folder: "card_covers",
-    });
+    const cloud = await cloudinary.v2.uploader.upload(
+      cover,
+      {
+        folder: "card_covers",
+      },
+      (error) => {
+        return res.status(500).json({
+          status: false,
+          message: error,
+        });
+      }
+    );
 
     card.cover = {
       public_id: cloud.public_id,
@@ -290,7 +299,10 @@ const updateCover = async (req, res) => {
 
     await cloudinary.v2.uploader.destroy(prev_cover_id, (error) => {
       if (error) {
-        throw new Error(error);
+        return res.status(500).json({
+          status: false,
+          message: error,
+        });
       }
     });
 
@@ -301,7 +313,10 @@ const updateCover = async (req, res) => {
       },
       (error) => {
         if (error) {
-          throw new Error(error);
+          return res.status(500).json({
+            status: false,
+            message: error,
+          });
         }
       }
     );
@@ -339,7 +354,10 @@ const removeCover = async (req, res) => {
 
     await cloudinary.v2.uploader.destroy(cover_id, (error) => {
       if (error) {
-        throw new Error(error);
+        return res.status(500).json({
+          status: false,
+          message: error,
+        });
       }
     });
 
@@ -449,7 +467,10 @@ const deleteCard = async (req, res) => {
     if (cover_id) {
       await cloudinary.v2.uploader.destroy(cover_id, (error) => {
         if (error) {
-          throw new Error(error);
+          return res.status(500).json({
+            status: false,
+            message: error,
+          });
         }
       });
     }

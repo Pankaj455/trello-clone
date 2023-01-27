@@ -52,7 +52,7 @@ const listReducer = (state, action) => {
         }),
       };
 
-    case "UPDATE_CARD_TITLE":
+    case "UPDATE_CARD":
       return {
         ...state,
         allLists: state.allLists.map((list) => {
@@ -61,7 +61,8 @@ const listReducer = (state, action) => {
               ...list,
               cards: list.cards.map((card) => {
                 if (card._id === action.payload.id) {
-                  card.title = action.payload.title;
+                  if (action.payload.title) card.title = action.payload.title;
+                  else card.description = action.payload.description;
                 }
                 return card;
               }),
@@ -70,26 +71,6 @@ const listReducer = (state, action) => {
           return list;
         }),
       };
-
-    case "UPDATE_CARD_DESCRIPTION":
-      return {
-        ...state,
-        allLists: state.allLists.map((list) => {
-          if (list._id === action.payload.list_id) {
-            list = {
-              ...list,
-              cards: list.cards.map((card) => {
-                if (card._id === action.payload.id) {
-                  card.description = action.payload.description;
-                }
-                return card;
-              }),
-            };
-          }
-          return list;
-        }),
-      };
-
     case "CREATE_NEW_COMMENT":
       return {
         ...state,

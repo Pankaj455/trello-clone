@@ -13,7 +13,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import axios from "../../axios";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { AiOutlinePlus, AiOutlineSearch } from "react-icons/ai";
 import { useAppContext } from "../../context/userContext";
 import { useParams } from "react-router-dom";
@@ -21,16 +21,15 @@ import { customScrollbar } from "../../utils/util";
 import { useListContext } from "../../context/listContext";
 
 const InviteCard = () => {
-  const { _id, boards, addMemberToBoard, isLoading } = useAppContext();
+  const { _id, boards, addMemberToBoard } = useAppContext();
   const { removeMemberFromBoard } = useListContext();
+  const { id } = useParams();
+  const board = boards.filter((board) => board._id === id)[0];
   const { onClose } = useDisclosure();
   const inputRef = useRef("");
-  const { id } = useParams();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState(board?.members || []);
   const [isFetching, setIsFetching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-
-  const board = boards.filter((board) => board._id === id)[0];
 
   const findUsers = async () => {
     const query = inputRef.current.value.trim();
@@ -60,7 +59,7 @@ const InviteCard = () => {
   const onPopoverClose = () => {
     onClose();
     inputRef.current.value = "";
-    setUsers([]);
+    setUsers(board.members);
     setHasSearched(false);
   };
 
@@ -141,11 +140,7 @@ const InviteCard = () => {
                   alignItems="center"
                   gap={3}
                 >
-                  <Avatar
-                    size="sm"
-                    name={user.name}
-                    // src={boardMember.avatar?.url}
-                  />
+                  <Avatar size="sm" name={user.name} src={user.avatar?.url} />
                   <Text
                     fontSize={14}
                     fontWeight={500}

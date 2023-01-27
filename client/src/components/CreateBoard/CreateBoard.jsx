@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Image,
   FormControl,
@@ -15,17 +15,16 @@ import {
 } from "@chakra-ui/react";
 import { MdHttps, MdImage, MdPublic } from "react-icons/md";
 import { AiOutlinePlus } from "react-icons/ai";
-import axios from "../../axios";
 import { useAppContext } from "../../context/userContext";
 
 const CreateBoard = ({ isOpen, onClose }) => {
-  const { createBoard } = useAppContext();
+  const { createBoard, isLoading } = useAppContext();
 
   const [title, setTitle] = useState("");
   // const [visibility, setVisibility] = useState(false);
   const [cover, setCover] = useState(null);
   const [isError, setIsError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const imgRef = useRef();
 
   const handleInputChange = (e) => {
@@ -60,25 +59,14 @@ const CreateBoard = ({ isOpen, onClose }) => {
       // visibility,
       cover,
     };
-    setIsLoading(true);
-    try {
-      const { data } = await axios.post("/board/create", newBoard, {
-        headers: {
-          token: localStorage.getItem("auth-token"),
-        },
-      });
-
-      createBoard(data.board);
-    } catch (error) {
-      console.log("Error: ", error);
-    } finally {
-      setTitle("");
-      setCover(null);
-      // setVisibility(false);
-      setIsLoading(false);
-      imgRef.current.value = null;
-      onClose();
-    }
+    setLoading(true);
+    await createBoard(newBoard);
+    setTitle("");
+    setCover(null);
+    setLoading(false);
+    // setVisibility(false);
+    imgRef.current.value = null;
+    onClose();
   };
   return (
     <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="outside">
@@ -168,7 +156,7 @@ const CreateBoard = ({ isOpen, onClose }) => {
                 Cancel
               </Button>
               <Button
-                isLoading={isLoading}
+                isLoading={loading}
                 loadingText="Creating"
                 size="sm"
                 leftIcon={<AiOutlinePlus />}

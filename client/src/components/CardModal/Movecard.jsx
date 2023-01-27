@@ -32,10 +32,8 @@ const Movecard = ({ listId, listTitle, index, card_id }) => {
     { length: selectedList === listId ? totalCards : totalCards + 1 },
     (_, i) => i + 1
   );
-  // console.log(positions);
 
   const move = () => {
-    // console.log("move card");
     moveCard(listId, selectedList, index, currPosition, card_id);
     onClose();
   };

@@ -62,7 +62,13 @@ const Card = ({ board }) => {
         spacing={board.members.length <= 3 ? 1 : -2}
       >
         {board.members.map((member) => {
-          return <Avatar key={member._id} name={member.name} />;
+          return (
+            <Avatar
+              key={member._id}
+              name={member.name}
+              src={member.avatar?.url}
+            />
+          );
         })}
       </AvatarGroup>
     </Box>

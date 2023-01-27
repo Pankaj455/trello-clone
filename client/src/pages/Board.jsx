@@ -1,5 +1,5 @@
-import { useAppContext } from "../../context/userContext";
-import Header from "../Header/Header";
+import { useAppContext } from "../context/userContext";
+import Header from "../components/Header/Header";
 import {
   Button,
   AvatarGroup,
@@ -10,12 +10,12 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router-dom";
-import Loader from "../Loader/Loader";
-import BoardMenu from "../BoardMenu/BoardMenu";
-import ListContainer from "../List/ListContainer";
-import useAuth from "../../hooks/useAuth";
-import { useListContext } from "../../context/listContext";
-import InviteCard from "../InviteToBoard/InviteCard";
+import Loader from "../components/Loader/Loader";
+import BoardMenu from "../components/BoardMenu/BoardMenu";
+import ListContainer from "../components/List/ListContainer";
+import useAuth from "../hooks/useAuth";
+import { useListContext } from "../context/listContext";
+import InviteCard from "../components/InviteToBoard/InviteCard";
 
 const Board = () => {
   const { _id, boards, loadingUser, loadUser, error } = useAppContext();
@@ -36,7 +36,13 @@ const Board = () => {
             <Flex marginLeft="8px" flexGrow={1}>
               <AvatarGroup size="sm" spacing={2}>
                 {board[0].members.map((member) => {
-                  return <Avatar key={member._id} name={member.name} />;
+                  return (
+                    <Avatar
+                      key={member._id}
+                      name={member.name}
+                      src={member.avatar?.url}
+                    />
+                  );
                 })}
               </AvatarGroup>
               {isAdmin &&

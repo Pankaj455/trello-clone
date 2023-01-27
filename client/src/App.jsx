@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import FormContainer from "./components/Authentication/FormContainer";
+import FormContainer from "./pages/Auth";
 import AllBoards from "./components/AllBoards/AllBoards";
 import ProtectedRoutes from "./ProtectedRoutes";
-import MyProfile from "./components/MyProfile/MyProfile";
-import Board from "./components/Board/Board";
+import MyProfile from "./pages/MyProfile";
+import Board from "./pages/Board";
 import AppProvider from "./context/userContext";
 import ListDataProvider from "./context/listContext";
 
@@ -14,14 +14,12 @@ function App() {
         <ListDataProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<FormContainer />}>
-                <Route path="/auth" element={<FormContainer />} />
-              </Route>
               <Route element={<ProtectedRoutes />}>
                 <Route path="/boards" element={<AllBoards />} />
                 <Route path="/boards/:id" element={<Board />} />
                 <Route path="/me" element={<MyProfile />} />
               </Route>
+              <Route path="/" element={<FormContainer />} />
             </Routes>
           </BrowserRouter>
         </ListDataProvider>
