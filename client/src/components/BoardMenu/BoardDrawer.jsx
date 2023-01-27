@@ -30,19 +30,25 @@ const BoardDrawer = ({ isOpen, onClose }) => {
     getAdminProfile,
     name,
     avatar,
-    isLoading,
   } = useAppContext();
   const { removeMemberFromBoard } = useListContext();
   const { id: location } = useParams();
 
   const [edit, setEdit] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const board = boards.filter((board) => board._id === location);
   const { description, createdAt } = board[0];
 
+  const getAdminInfo = async (adminId) => {
+    setIsLoading(true);
+    await getAdminProfile(adminId);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     if (!admin && board[0].admin !== userId) {
-      getAdminProfile(board[0].admin);
+      getAdminInfo(board[0].admin);
     }
   }, []);
 
@@ -74,7 +80,10 @@ const BoardDrawer = ({ isOpen, onClose }) => {
               <FaUserCircle />
               <Text>Made by</Text>
             </HStack>
-            <HStack spacing={4} mb={3}>
+            <HStack
+              spacing={4}
+              mb={!description && userId !== board[0].admin ? 0 : 3}
+            >
               <Avatar
                 size="sm"
                 name={userId === board[0].admin ? name : admin?.name}
@@ -95,7 +104,16 @@ const BoardDrawer = ({ isOpen, onClose }) => {
                 </Text>
               </VStack>
             </HStack>
-            <ButtonGroup fontFamily="'Poppins', sans-serif" spacing={4} mb={3}>
+            <ButtonGroup
+              fontFamily="'Poppins', sans-serif"
+              spacing={4}
+              mb={3}
+              display={
+                !description && userId !== board[0].admin
+                  ? "none"
+                  : "inline-flex"
+              }
+            >
               <Button
                 variant="text"
                 size="xs"

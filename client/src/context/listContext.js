@@ -1,7 +1,6 @@
 import reducer from "../reducers/listReducer";
 import axios from "../axios";
 import { useAppContext } from "./userContext";
-import { useToast } from "@chakra-ui/react";
 
 const { createContext, useContext, useReducer } = require("react");
 
@@ -15,19 +14,9 @@ const ListContext = createContext();
 export const useListContext = () => useContext(ListContext);
 
 const ListDataProvider = ({ children }) => {
-  const { name, avatar, _id, removeMemberFromUserContext } = useAppContext();
+  const { name, avatar, _id, removeMemberFromUserContext, showPopup } =
+    useAppContext();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const toast = useToast();
-
-  const showPopup = (id, status, description) => {
-    toast({
-      id,
-      position: "bottom-left",
-      description,
-      status,
-      duration: 3500,
-    });
-  };
 
   const loadAllLists = async (board_id) => {
     try {
@@ -46,8 +35,39 @@ const ListDataProvider = ({ children }) => {
     dispatch({ type: "CLEAR_ALL_LISTS" });
   };
 
-  const addNewList = (payload) => {
-    dispatch({ type: "ADD_NEW_LIST", payload });
+  const addNewList = async ({ title, board_id }) => {
+    try {
+      const response = await axios.post(
+        "/board/list/new",
+        { title, board_id },
+        {
+          headers: {
+            token: localStorage.getItem("auth-token"),
+          },
+        }
+      );
+      if (response.data.success) {
+        dispatch({
+          type: "ADD_NEW_LIST",
+          payload: {
+            board_id,
+            newList: {
+              _id: response.data._id,
+              title,
+              cards: [],
+            },
+          },
+        });
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+      showPopup(
+        "new-list",
+        "error",
+        `${error.response.data.message}. Try again or reload the page`,
+        "bottom-left"
+      );
+    }
   };
 
   const updateListTitle = async (title, list_id, board_id) => {
@@ -70,6 +90,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error", error);
+      showPopup(
+        "update-list",
+        "error",
+        `${error.response.data.message}. Try again or reload the page`,
+        "bottom-left"
+      );
     }
   };
 
@@ -90,6 +116,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      showPopup(
+        "delete-list",
+        "error",
+        `${error.response.data.message}. Try again or reload the page`,
+        "bottom-left"
+      );
     }
   };
 
@@ -116,6 +148,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      showPopup(
+        "new-card",
+        "error",
+        `${error.response.data.message}. Try again or reload the page`,
+        "bottom-left"
+      );
     }
   };
 
@@ -142,6 +180,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      showPopup(
+        "update-card",
+        "error",
+        `${error.response.data.message}. Try again or reload the page`,
+        "bottom-left"
+      );
     }
   };
 
@@ -172,6 +216,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      showPopup(
+        "new-comment",
+        "error",
+        `${error.response.data.message}. Try again or reload the page`,
+        "bottom-left"
+      );
     }
   };
 
@@ -197,6 +247,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      showPopup(
+        "remove-comment",
+        "error",
+        `${error.response.data.message}. Try again or reload the page`,
+        "bottom-left"
+      );
     }
   };
 
@@ -245,6 +301,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      showPopup(
+        "new-member",
+        "error",
+        `${error.response.data.message}. Try again or reload the page`,
+        "bottom-left"
+      );
     }
   };
 
@@ -271,6 +333,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      showPopup(
+        "rem-member",
+        "error",
+        `${error.response.data.message}. Try again or reload the page`,
+        "bottom-left"
+      );
     }
   };
 
@@ -295,7 +363,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
-      alert("Something went wrong. Try again later!");
+      showPopup(
+        "new-cover",
+        "error",
+        `Something went wrong. Try again later or reload the page`,
+        "bottom-left"
+      );
     }
   };
 
@@ -320,7 +393,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
-      alert("Something went wrong. Try again later!");
+      showPopup(
+        "remove-cover",
+        "error",
+        `Something went wrong. Try again later or reload the page`,
+        "bottom-left"
+      );
     }
   };
 
@@ -345,7 +423,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
-      alert("Something went wrong. Try again later!");
+      showPopup(
+        "update-cover",
+        "error",
+        `Something went wrong. Try again later or reload the page`,
+        "bottom-left"
+      );
     }
   };
 
@@ -371,6 +454,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      showPopup(
+        "move",
+        "error",
+        `${error.response.data.message}. Reload the page`,
+        "bottom-left"
+      );
     }
   };
 
@@ -394,6 +483,12 @@ const ListDataProvider = ({ children }) => {
     } catch (error) {
       dispatch({ type: "LOADING_FAILURE", payload: error.message });
       console.log("Error: ", error);
+      showPopup(
+        "move",
+        "error",
+        `${error.response.data.message}. Try again later`,
+        "bottom-left"
+      );
     }
   };
 
@@ -414,6 +509,12 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      showPopup(
+        "move",
+        "error",
+        `${error.response.data.message}. Reload the page`,
+        "bottom-left"
+      );
     }
   };
 

@@ -1,7 +1,7 @@
 import { useContext, createContext, useReducer } from "react";
 import reducer from "../reducers/userReducer";
 import axios from "../axios";
-import { useToast } from "@chakra-ui/react";
+import { position, useToast } from "@chakra-ui/react";
 
 const AppContext = createContext();
 
@@ -19,67 +19,51 @@ export const useAppContext = () => {
 
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const loginToast = useToast();
-  const registerToast = useToast();
-  const profileUploadToast = useToast();
-  const toastId = "avatar";
+  const toast = useToast();
+
+  const showPopup = (id, status, description, position = "bottom-left") => {
+    toast({
+      id,
+      position: status === "error" ? "top" : position,
+      description,
+      status,
+      duration: 3500,
+    });
+  };
 
   const register = async (user) => {
-    // const toastId = "register";
     try {
       dispatch({ type: "LOADING_REQUEST" });
       const { data } = await axios.post("/user/register", user);
-      registerToast({
-        position: "top",
-        description: "Account created successfully",
-        status: "success",
-        duration: 3000,
-      });
-      localStorage.setItem("auth-token", data.token);
-      dispatch({ type: "LOADING_SUCCESS" });
+      if (data) {
+        dispatch({ type: "LOADING_SUCCESS" });
+        localStorage.setItem("auth-token", data.token);
+        showPopup("register", "success", "Account created successfully", "top");
+      }
     } catch (error) {
       dispatch({
         type: "LOADING_FAILURE",
         payload: error.response.data.message,
       });
-      if (!registerToast.isActive(toastId))
-        registerToast({
-          id: toastId,
-          position: "top",
-          description: error.response.data.message,
-          status: "error",
-          duration: 2000,
-        });
+      showPopup("register", "error", error.response.data.message, "top");
     }
   };
 
   const login = async (user) => {
-    // const toastId = "login-info";
     try {
       dispatch({ type: "LOADING_REQUEST" });
       const { data } = await axios.post("/user/login", user);
-      localStorage.setItem("auth-token", data.token);
-      loginToast({
-        id: toastId,
-        position: "top-right",
-        description: "Logged In",
-        status: "success",
-        duration: 2000,
-      });
-      dispatch({ type: "LOADING_SUCCESS" });
+      if (data) {
+        dispatch({ type: "LOADING_SUCCESS" });
+        localStorage.setItem("auth-token", data.token);
+        showPopup("login", "success", "Logged In", "top-right");
+      }
     } catch (error) {
       dispatch({
         type: "LOADING_FAILURE",
         payload: error.response.data.message,
       });
-      if (!loginToast.isActive(toastId))
-        loginToast({
-          id: toastId,
-          position: "top",
-          description: error.response.data.message,
-          status: "error",
-          duration: 2000,
-        });
+      showPopup("login", "error", error.response.data.message, "top");
     }
   };
 
@@ -114,7 +98,6 @@ const AppProvider = ({ children }) => {
   };
 
   const uploadProfile = async (image) => {
-    // console.log(image);
     try {
       dispatch({ type: "LOADING_REQUEST" });
       const { data } = await axios.post(
@@ -128,16 +111,13 @@ const AppProvider = ({ children }) => {
       );
       if (data.success) {
         dispatch({ type: "LOADING_SUCCESS" });
-        if (!profileUploadToast.isActive(toastId)) {
-          profileUploadToast({
-            id: toastId,
-            position: "top-right",
-            description: "Profile uploaded successfully",
-            status: "success",
-            duration: 2000,
-          });
-        }
         dispatch({ type: "UPDATE_AVATAR", payload: data.avatar });
+        showPopup(
+          "upload",
+          "success",
+          "Profile uploaded successfully",
+          "top-right"
+        );
       }
     } catch (error) {
       console.log("Error: ", error);
@@ -145,12 +125,11 @@ const AppProvider = ({ children }) => {
         type: "LOADING_FAILURE",
         payload: error.response,
       });
-      alert("Something went wrong. Try again!");
+      showPopup("upload", "error", error.response.data.message, "top-right");
     }
   };
   const updateProfile = async ({ image, public_id, name }) => {
     try {
-      // console.log(public_id, name);
       dispatch({ type: "LOADING_REQUEST" });
       const { data } = await axios.put(
         "/user/update/profile",
@@ -163,18 +142,17 @@ const AppProvider = ({ children }) => {
       );
       if (data.success) {
         dispatch({ type: "LOADING_SUCCESS" });
-        profileUploadToast({
-          id: toastId,
-          position: "top-right",
-          description: "Profile updated successfully",
-          status: "success",
-          duration: 2000,
-        });
         if (name) {
           dispatch({ type: "UPDATE_PROFILE", payload: data.name });
         } else {
           dispatch({ type: "UPDATE_AVATAR", payload: data.avatar });
         }
+        showPopup(
+          "upload",
+          "success",
+          "Profile updated successfully",
+          "top-right"
+        );
       }
     } catch (error) {
       console.log("Error: ", error);
@@ -182,7 +160,7 @@ const AppProvider = ({ children }) => {
         type: "LOADING_FAILURE",
         payload: error.response,
       });
-      alert("Something went wrong. Try again!");
+      showPopup("upload", "error", error.response.data.message, "top-right");
     }
   };
 
@@ -219,24 +197,27 @@ const AppProvider = ({ children }) => {
     } catch (error) {
       dispatch({ type: "LOADING_FAILURE", payload: error.message });
       console.log("Error: ", error);
+      showPopup(
+        "create-board",
+        "error",
+        error.response.data.message,
+        "top-right"
+      );
     }
   };
 
   const getAdminProfile = async (admin) => {
     try {
-      dispatch({ type: "LOADING_REQUEST" });
       const { data } = await axios.get(`/user/me/?id=${admin}`, {
         headers: {
           token: localStorage.getItem("auth-token"),
         },
       });
       if (data) {
-        dispatch({ type: "LOADING_SUCCESS" });
         dispatch({ type: "GET_ADMIN", payload: data.user });
       }
     } catch (error) {
       console.log("Error: ", error);
-      dispatch({ type: "LOADING_FAILURE", payload: error.message });
     }
   };
 
@@ -259,12 +240,10 @@ const AppProvider = ({ children }) => {
       });
       console.log("Error:", error);
     }
-    // dispatch({ type: "UPDATE_BOARD_INFO", payload: data });
   };
 
   const addMemberToBoard = async (user, board_id) => {
     try {
-      // dispatch({ type: "REQUEST_LOADING" });
       const response = await axios.post(
         "/board/addMember",
         { user_id: user._id, board_id },
@@ -280,7 +259,6 @@ const AppProvider = ({ children }) => {
     } catch (error) {
       console.log("Error: ", error);
     }
-    // dispatch({ type: "ADD_MEMBER", payload: { user, board_id } });
   };
 
   const removeMemberFromUserContext = (payload) => {
@@ -291,6 +269,7 @@ const AppProvider = ({ children }) => {
     <AppContext.Provider
       value={{
         ...state,
+        showPopup,
         register,
         login,
         loadUser,

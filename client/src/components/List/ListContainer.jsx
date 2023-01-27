@@ -32,40 +32,13 @@ const ListContainer = ({ boards }) => {
     const title = listInputRef.current.value;
     if (!title.trim()) return;
     setLoading(true);
-    try {
-      const response = await axios.post(
-        "/board/list/new",
-        { title, board_id: location },
-        {
-          headers: {
-            token: localStorage.getItem("auth-token"),
-          },
-        }
-      );
-      if (response.data.success) {
-        addNewList({
-          board_id: location,
-          newList: {
-            _id: response.data._id,
-            title,
-            cards: [],
-          },
-        });
-      }
-      // addNewList({
-      //     board_id: location.state,
-      //     newList: {
-      //         _id: response.data._id,
-      //         title,
-      //         cards: []
-      //     }
-      // })
-    } catch (error) {
-      console.log("Error: ", error);
-    } finally {
-      setLoading(false);
-      setAddingList(false);
-    }
+    await addNewList({
+      board_id: location,
+      title,
+    });
+
+    setLoading(false);
+    setAddingList(false);
   };
 
   return (

@@ -3,12 +3,12 @@ import { useParams } from "react-router-dom";
 import { useAppContext } from "../context/userContext";
 
 const useAuth = () => {
-  const { boards, _id, loadingUser, loadUser } = useAppContext();
+  const { boards, _id, loadUser } = useAppContext();
 
   const { id: location } = useParams();
 
   useEffect(() => {
-    if (loadingUser) {
+    if (!_id) {
       loadUser();
     }
   }, []);

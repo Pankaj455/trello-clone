@@ -1,25 +1,15 @@
 import { useAppContext } from "../context/userContext";
 import Header from "../components/Header/Header";
-import {
-  Button,
-  AvatarGroup,
-  Avatar,
-  Tooltip,
-  Flex,
-  Image,
-  Box,
-} from "@chakra-ui/react";
+import { AvatarGroup, Avatar, Tooltip, Flex, Box } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader/Loader";
 import BoardMenu from "../components/BoardMenu/BoardMenu";
 import ListContainer from "../components/List/ListContainer";
 import useAuth from "../hooks/useAuth";
-import { useListContext } from "../context/listContext";
 import InviteCard from "../components/InviteToBoard/InviteCard";
 
 const Board = () => {
-  const { _id, boards, loadingUser, loadUser, error } = useAppContext();
-  const { moveCard } = useListContext();
+  const { _id, boards, isLoading } = useAppContext();
   const { id: location } = useParams();
   const navigate = useNavigate();
 
@@ -27,7 +17,7 @@ const Board = () => {
 
   const { isAdmin } = useAuth();
 
-  return !loadingUser ? (
+  return !isLoading ? (
     board[0]?.members.filter((member) => member._id === _id) ? (
       <>
         <Header />

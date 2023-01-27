@@ -49,12 +49,6 @@ const AddMemberToCard = ({ members, id, listId, children }) => {
           <PopoverTrigger>{children}</PopoverTrigger>
           <PopoverContent onClick={(e) => e.stopPropagation()}>
             <PopoverArrow />
-            <PopoverCloseButton
-              onClick={(e) => {
-                e.stopPropagation();
-                onClose();
-              }}
-            />
             <PopoverHeader
               textAlign="center"
               fontFamily="'Poppins', sans-serif"
