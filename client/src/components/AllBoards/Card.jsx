@@ -1,6 +1,19 @@
 import React from "react";
-import { Image, AvatarGroup, Avatar, Box } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import {
+  Image,
+  AvatarGroup,
+  Avatar,
+  Box,
+  Flex,
+  Button,
+  Menu,
+  MenuButton,
+  IconButton,
+  MenuList,
+  MenuItem,
+  Portal,
+} from "@chakra-ui/react";
+import { TbDotsVertical } from "react-icons/tb";
 
 const Card = ({ board }) => {
   return (
@@ -56,21 +69,37 @@ const Card = ({ board }) => {
       >
         {board.title}
       </h3>
-      <AvatarGroup
-        size="sm"
-        max={3}
-        spacing={board.members.length <= 3 ? 1 : -2}
-      >
-        {board.members.map((member) => {
-          return (
-            <Avatar
-              key={member._id}
-              name={member.name}
-              src={member.avatar?.url}
-            />
-          );
-        })}
-      </AvatarGroup>
+      <Flex justifyContent="space-between">
+        <AvatarGroup
+          size="sm"
+          max={3}
+          spacing={board.members.length <= 3 ? 1 : -2}
+        >
+          {board.members.map((member) => {
+            return (
+              <Avatar
+                key={member._id}
+                name={member.name}
+                src={member.avatar?.url}
+              />
+            );
+          })}
+        </AvatarGroup>
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            aria-label="Options"
+            icon={<TbDotsVertical />}
+            variant="ghost"
+          />
+          <Portal>
+            <MenuList fontFamily={"'Noto Sans', sans-serif"} fontWeight={400}>
+              <MenuItem>Delete</MenuItem>
+              <MenuItem>Update Cover</MenuItem>
+            </MenuList>
+          </Portal>
+        </Menu>
+      </Flex>
     </Box>
   );
 };

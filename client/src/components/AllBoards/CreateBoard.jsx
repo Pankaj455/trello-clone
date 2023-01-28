@@ -18,7 +18,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { useAppContext } from "../../context/userContext";
 
 const CreateBoard = ({ isOpen, onClose }) => {
-  const { createBoard, isLoading } = useAppContext();
+  const { createBoard } = useAppContext();
 
   const [title, setTitle] = useState("");
   // const [visibility, setVisibility] = useState(false);

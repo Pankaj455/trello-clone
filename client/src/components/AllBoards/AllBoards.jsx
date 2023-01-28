@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Card from "./Card";
-import CreateBoard from "../CreateBoard/CreateBoard";
+import CreateBoard from "./CreateBoard";
 import Header from "../Header/Header";
 import Loader from "../Loader/Loader";
 import { Box, Button, Flex, useDisclosure } from "@chakra-ui/react";
@@ -9,7 +9,7 @@ import { useAppContext } from "../../context/userContext";
 import { Link } from "react-router-dom";
 
 const AllBoards = () => {
-  const { loadUser, boards, loadingUser, isLoading } = useAppContext();
+  const { loadUser, boards, isLoading } = useAppContext();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   useEffect(() => {
@@ -61,7 +61,18 @@ const AllBoards = () => {
               <Flex gap="1.2em" flexWrap="wrap">
                 {boards.map((board) => {
                   return (
-                    <Link key={board._id} to={`/boards/${board._id}`}>
+                    <Link
+                      key={board._id}
+                      to={`/boards/${board._id}`}
+                      onClick={(e) => {
+                        if (
+                          e.target.localName === "svg" ||
+                          e.target.localName === "button"
+                        ) {
+                          e.preventDefault();
+                        }
+                      }}
+                    >
                       <Card board={board} />
                     </Link>
                   );
