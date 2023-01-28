@@ -185,7 +185,7 @@ const BoardDrawer = ({ isOpen, onClose }) => {
                   {board[0].admin !== userId && admin && (
                     <HStack alignItems="center" mb={5}>
                       <HStack flexGrow={1} spacing={4}>
-                        <Avatar size="xs" name={name} src={avatar?.url} />
+                        <Avatar size="xs" name={name} src={admin.avatar?.url} />
                         <Text
                           fontSize={11}
                           fontWeight={500}
