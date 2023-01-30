@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   Image,
   AvatarGroup,
@@ -12,10 +12,33 @@ import {
   MenuList,
   MenuItem,
   Portal,
+  Spinner,
 } from "@chakra-ui/react";
 import { TbDotsVertical } from "react-icons/tb";
+import { useAppContext } from "../../context/userContext";
 
 const Card = ({ board }) => {
+  const { updateBoard, _id: userId } = useAppContext();
+  const coverRef = useRef();
+  const removeBoard = () => {
+    console.log("board has been deleted");
+  };
+
+  const handleImageUpload = (e) => {
+    const image = e.target.files[0];
+    if (image && image.type.substr(0, 5) === "image") {
+      const reader = new FileReader();
+      reader.onloadend = function () {
+        updateBoard({
+          newCover: reader.result,
+          prevCover: board.cover,
+          board_id: board._id,
+        });
+      };
+      reader.readAsDataURL(image);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -85,20 +108,31 @@ const Card = ({ board }) => {
             );
           })}
         </AvatarGroup>
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            aria-label="Options"
-            icon={<TbDotsVertical />}
-            variant="ghost"
-          />
-          <Portal>
-            <MenuList fontFamily={"'Noto Sans', sans-serif"} fontWeight={400}>
-              <MenuItem>Delete</MenuItem>
-              <MenuItem>Update Cover</MenuItem>
-            </MenuList>
-          </Portal>
-        </Menu>
+        {board.admin === userId && (
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              aria-label="Options"
+              icon={<TbDotsVertical />}
+              variant="ghost"
+            />
+            <Portal>
+              <MenuList fontFamily={"'Noto Sans', sans-serif"} fontWeight={400}>
+                <input
+                  ref={coverRef}
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={handleImageUpload}
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <MenuItem onClick={removeBoard}>Delete Board</MenuItem>
+                <MenuItem onClick={() => coverRef.current.click()}>
+                  Update Cover
+                </MenuItem>
+              </MenuList>
+            </Portal>
+          </Menu>
+        )}
       </Flex>
     </Box>
   );

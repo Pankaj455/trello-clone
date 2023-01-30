@@ -65,34 +65,17 @@ const userReducer = (state, action) => {
       };
 
     case "UPDATE_BOARD_INFO":
-      const { visibility, title, description, board_id } = action.payload;
+      const { visibility, title, description, cover, board_id } =
+        action.payload;
 
-      if (title) {
-        return {
-          ...state,
-          boards: state.boards.map((board) => {
-            if (board._id === board_id) {
-              board.title = title;
-            }
-            return board;
-          }),
-        };
-      } else if (description !== undefined) {
-        return {
-          ...state,
-          boards: state.boards.map((board) => {
-            if (board._id === board_id) {
-              board.description = description;
-            }
-            return board;
-          }),
-        };
-      }
       return {
         ...state,
         boards: state.boards.map((board) => {
           if (board._id === board_id) {
-            board.visibility = visibility;
+            if (title) board.title = title;
+            else if (visibility) board.visibility = visibility;
+            else if (description) board.description = description;
+            else if (cover) board.cover = cover;
           }
           return board;
         }),

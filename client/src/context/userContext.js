@@ -231,7 +231,10 @@ const AppProvider = ({ children }) => {
       });
       if (response.data.success) {
         dispatch({ type: "LOADING_SUCCESS" });
-        dispatch({ type: "UPDATE_BOARD_INFO", payload: data });
+        dispatch({
+          type: "UPDATE_BOARD_INFO",
+          payload: { ...data, cover: response.data.cover },
+        });
       }
     } catch (error) {
       dispatch({

@@ -136,6 +136,7 @@ const deleteList = async (req, res) => {
         }
         // console.log(card);
         await card.remove();
+        await list.cards.filter((item) => item != cardId);
       }
     }
 

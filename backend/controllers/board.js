@@ -14,9 +14,20 @@ const createBoard = async (req, res) => {
     };
 
     if (cover) {
-      const cloud = await cloudinary.v2.uploader.upload(cover, {
-        folder: "covers",
-      });
+      const cloud = await cloudinary.v2.uploader.upload(
+        cover,
+        {
+          folder: "covers",
+        },
+        (error) => {
+          if (error) {
+            return res.status(500).json({
+              success: false,
+              error: "Server error. Couldn't upload cover!",
+            });
+          }
+        }
+      );
       newBoardData.cover = {
         public_id: cloud.public_id,
         url: cloud.secure_url,
@@ -163,7 +174,8 @@ const removeMember = async (req, res) => {
 // to update the title, description and visibility of the board
 const updateBoard = async (req, res) => {
   try {
-    const { board_id, title, description, visibility } = req.body;
+    const { board_id, title, description, visibility, prevCover, newCover } =
+      req.body;
 
     const board = await Board.findById(board_id);
     if (!board) {
@@ -184,8 +196,38 @@ const updateBoard = async (req, res) => {
       board.title = title;
     } else if (description !== undefined) {
       board.description = description;
-    } else {
+    } else if (visibility) {
       board.visibility = visibility;
+    } else if (newCover) {
+      // console.log("prevCover -> ", prevCover);
+      if (prevCover) {
+        await cloudinary.v2.uploader.destroy(prevCover.public_id, (error) => {
+          if (error) {
+            console.log("update error: ", error);
+            return res.status(500).json({
+              success: false,
+              error: "Server error. Couldn't update cover!",
+            });
+          }
+        });
+      }
+      const cloud = await cloudinary.v2.uploader.upload(
+        newCover,
+        { folder: "covers" },
+        (error) => {
+          if (error) {
+            console.log("upload error: ", error);
+            return res.status(500).json({
+              success: false,
+              error: "Server error. Couldn't upload cover!",
+            });
+          }
+        }
+      );
+      board.cover = {
+        public_id: cloud.public_id,
+        url: cloud.secure_url,
+      };
     }
 
     await board.save();
@@ -193,6 +235,7 @@ const updateBoard = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Board updated successfully!",
+      cover: board.cover,
     });
   } catch (error) {
     return res.status(500).json({

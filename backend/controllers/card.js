@@ -259,10 +259,11 @@ const setCover = async (req, res) => {
         folder: "card_covers",
       },
       (error) => {
-        return res.status(500).json({
-          status: false,
-          message: error,
-        });
+        if (error)
+          return res.status(500).json({
+            status: false,
+            message: error,
+          });
       }
     );
 
