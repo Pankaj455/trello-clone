@@ -58,26 +58,52 @@ const AllBoards = () => {
                   Add
                 </Button>
               </Flex>
-              <Flex gap="1.2em" flexWrap="wrap">
-                {boards.map((board) => {
-                  return (
-                    <Link
-                      key={board._id}
-                      to={`/boards/${board._id}`}
-                      onClick={(e) => {
-                        if (
-                          e.target.localName === "svg" ||
-                          e.target.localName === "button"
-                        ) {
-                          e.preventDefault();
-                        }
-                      }}
-                    >
-                      <Card board={board} />
-                    </Link>
-                  );
-                })}
-              </Flex>
+              {boards.length === 0 ? (
+                <Flex
+                  backgroundColor="#EDF2F788"
+                  borderRadius="16px"
+                  padding="3em 6em"
+                  color="#828282"
+                  fontFamily="'Noto Sans', serif"
+                  justifyContent="center"
+                  alignItems="center"
+                  direction="column"
+                  cursor="pointer"
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "#edf2f7",
+                    },
+                    "&:active": {
+                      backgroundColor: "#edf2f788",
+                    },
+                  }}
+                  onClick={onOpen}
+                >
+                  <AiOutlinePlus />
+                  <p style={{ userSelect: "none" }}>Create Your first Board</p>
+                </Flex>
+              ) : (
+                <Flex gap="1.2em" flexWrap="wrap">
+                  {boards.map((board) => {
+                    return (
+                      <Link
+                        key={board._id}
+                        to={`/boards/${board._id}`}
+                        onClick={(e) => {
+                          if (
+                            e.target.localName === "svg" ||
+                            e.target.localName === "button"
+                          ) {
+                            e.preventDefault();
+                          }
+                        }}
+                      >
+                        <Card board={board} />
+                      </Link>
+                    );
+                  })}
+                </Flex>
+              )}
             </Box>
           </section>
         </>

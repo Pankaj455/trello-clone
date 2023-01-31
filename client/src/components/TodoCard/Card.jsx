@@ -6,7 +6,6 @@ import {
   Flex,
   Heading,
   Box,
-  HStack,
   Image,
   Stack,
   useDisclosure,
