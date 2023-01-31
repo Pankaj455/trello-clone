@@ -18,7 +18,7 @@ import { TbDotsVertical } from "react-icons/tb";
 import { useAppContext } from "../../context/userContext";
 
 const Card = ({ board }) => {
-  const { updateBoard, _id: userId } = useAppContext();
+  const { deleteBoard, updateBoard, _id: userId } = useAppContext();
   const coverRef = useRef();
   const removeBoard = () => {
     console.log("board has been deleted");
@@ -77,7 +77,7 @@ const Card = ({ board }) => {
             src={board.cover.url}
             height="100%"
             width="100%"
-            fit
+            fit="cover"
             alt="board-cover"
           />
         )}
@@ -117,7 +117,11 @@ const Card = ({ board }) => {
               variant="ghost"
             />
             <Portal>
-              <MenuList fontFamily={"'Noto Sans', sans-serif"} fontWeight={400}>
+              <MenuList
+                fontFamily={"'Poppins', sans-serif"}
+                fontSize="12px"
+                fontWeight={500}
+              >
                 <input
                   ref={coverRef}
                   type="file"
@@ -125,7 +129,9 @@ const Card = ({ board }) => {
                   onChange={handleImageUpload}
                   onClick={(e) => e.stopPropagation()}
                 />
-                <MenuItem onClick={removeBoard}>Delete Board</MenuItem>
+                <MenuItem onClick={() => deleteBoard(board._id)}>
+                  Delete Board
+                </MenuItem>
                 <MenuItem onClick={() => coverRef.current.click()}>
                   Update Cover
                 </MenuItem>

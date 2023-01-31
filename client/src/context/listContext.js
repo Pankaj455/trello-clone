@@ -363,6 +363,7 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      dispatch({ type: "UPLOADING_FAILURE" });
       showPopup(
         "new-cover",
         "error",
@@ -393,6 +394,7 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      dispatch({ type: "UPLOADING_FAILURE" });
       showPopup(
         "remove-cover",
         "error",
@@ -423,6 +425,7 @@ const ListDataProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      dispatch({ type: "UPLOADING_FAILURE" });
       showPopup(
         "update-cover",
         "error",

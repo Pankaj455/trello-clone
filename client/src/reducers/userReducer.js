@@ -24,6 +24,7 @@ const userReducer = (state, action) => {
         ...state,
         admin: action.payload,
       };
+
     case "GET_USER_CARDS":
       return {
         ...state,
@@ -35,6 +36,7 @@ const userReducer = (state, action) => {
         ...state,
         isLoading: true,
       };
+
     case "LOADING_SUCCESS":
       return {
         ...state,
@@ -112,6 +114,13 @@ const userReducer = (state, action) => {
           return board;
         }),
       };
+
+    case "DELETE_BOARD":
+      return {
+        ...state,
+        boards: state.boards.filter((board) => board._id !== action.payload),
+      };
+
     default:
       return state;
   }

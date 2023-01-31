@@ -110,7 +110,7 @@ const Card = ({
         </Flex>
       )}
       <Flex direction="row" gap={1}>
-        <AvatarGroup size="sm" max={2}>
+        <AvatarGroup size="sm" max={3}>
           {members?.map((member) => {
             return (
               <Avatar

@@ -171,7 +171,6 @@ const removeMember = async (req, res) => {
   }
 };
 
-// to update the title, description and visibility of the board
 const updateBoard = async (req, res) => {
   try {
     const { board_id, title, description, visibility, prevCover, newCover } =
@@ -245,9 +244,73 @@ const updateBoard = async (req, res) => {
   }
 };
 
+const deleteBoard = async (req, res) => {
+  try {
+    /*
+     * delete all the images related to the card cover from the cloudinary
+     * delete all cards and their references from each list
+     * delete all the lists and their references from each of the board
+     * delete the board cover from the cloudinary
+     * delete the board and its reference from all the user collection
+     */
+    const board = await Board.findById(req.params.id);
+
+    for (let i = 0; i < board.lists.length; i++) {
+      const list = await List.findById(board.lists[i]);
+      if (list) {
+        for (let j = 0; j < list.cards.length; j++) {
+          const card = await Card.findById(list.cards[j]);
+          if (card.cover.public_id) {
+            await cloudinary.v2.uploader.destroy(
+              card.cover.public_id,
+              (error) => {
+                if (error) {
+                  return res.status(500).json({
+                    status: false,
+                    message: "image deletion error from cloudinary",
+                  });
+                }
+              }
+            );
+          }
+          await card.remove();
+        }
+        await list.remove();
+        board.lists.filter((item) => item != list._id);
+        await board.save();
+      }
+    }
+
+    if (board.cover.public_id) {
+      await cloudinary.v2.uploader.destroy(board.cover.public_id, (error) => {
+        if (error) {
+          console.log(error);
+          return res.status(500).json({
+            status: false,
+            message: "Couldn't delete board cover",
+          });
+        }
+      });
+    }
+    await board.remove();
+    await User.updateMany({}, { $pull: { boards: req.params.id } });
+
+    return res.status(200).json({
+      success: true,
+      message: "board deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createBoard,
   addMember,
   removeMember,
   updateBoard,
+  deleteBoard,
 };

@@ -113,6 +113,7 @@ const CardModal = ({
       };
       reader.readAsDataURL(image);
     }
+    imgRef.current.value = null;
   };
 
   const removeCardCover = () => {

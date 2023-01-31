@@ -71,6 +71,7 @@ const listReducer = (state, action) => {
           return list;
         }),
       };
+
     case "CREATE_NEW_COMMENT":
       return {
         ...state,
@@ -235,6 +236,12 @@ const listReducer = (state, action) => {
       return {
         ...state,
         isUploading: true,
+      };
+
+    case "UPLOADING_FAILURE":
+      return {
+        ...state,
+        isUploading: false,
       };
 
     case "MOVE_CARD":

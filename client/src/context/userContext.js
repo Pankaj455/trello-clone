@@ -1,7 +1,7 @@
 import { useContext, createContext, useReducer } from "react";
 import reducer from "../reducers/userReducer";
 import axios from "../axios";
-import { position, useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 
 const AppContext = createContext();
 
@@ -264,6 +264,41 @@ const AppProvider = ({ children }) => {
     }
   };
 
+  const deleteBoard = async (id) => {
+    try {
+      dispatch({ type: "LOADING_REQUEST" });
+      const response = await axios.delete(`/board/delete/${id}`, {
+        headers: {
+          token: localStorage.getItem("auth-token"),
+        },
+      });
+      if (response.data.success) {
+        dispatch({ type: "LOADING_SUCCESS" });
+        dispatch({
+          type: "DELETE_BOARD",
+          payload: id,
+        });
+        showPopup(
+          "delete-board",
+          "success",
+          response.data.message,
+          "bottom-left"
+        );
+      }
+    } catch (error) {
+      console.log("Error:", error);
+      dispatch({
+        type: "LOADING_FAILURE",
+        payload: error.response.data.message,
+      });
+      showPopup(
+        "delte-board",
+        "error",
+        "Board is not deleted completely. Try again"
+      );
+    }
+  };
+
   const removeMemberFromUserContext = (payload) => {
     dispatch({ type: "REMOVE_MEMBER", payload });
   };
@@ -284,6 +319,7 @@ const AppProvider = ({ children }) => {
         getUserCards,
         updateBoard,
         addMemberToBoard,
+        deleteBoard,
         removeMemberFromUserContext,
       }}
     >
