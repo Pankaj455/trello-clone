@@ -5,9 +5,11 @@ const cors = require("cors");
 const board = require("./routes/board");
 const list = require("./routes/list");
 const user = require("./routes/user");
+const { requestLogger } = require("./middlewares/requestLogger");
 
 app.use(cors());
 app.use(express.json({ limit: "10mb", extended: true }));
+app.use(requestLogger);
 
 app.use("/api/v1/board", board);
 app.use("/api/v1/board", list);
