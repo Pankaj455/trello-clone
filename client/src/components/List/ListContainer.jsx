@@ -1,13 +1,12 @@
-import { Box, Button, Flex, Input, Stack } from "@chakra-ui/react";
+import { Box, Button, Flex, Input } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import List from "./List";
-import axios from "../../axios";
 import { customScrollbar } from "../../utils/util";
 import { useListContext } from "../../context/listContext";
 
-const ListContainer = ({ boards }) => {
+const ListContainer = () => {
   const { addNewList, clearAllLists, loadAllLists, allLists } =
     useListContext();
   const [addingList, setAddingList] = useState(false);
@@ -15,14 +14,11 @@ const ListContainer = ({ boards }) => {
   const listInputRef = useRef(null);
   const { id: location } = useParams();
 
-  // console.log(allLists);
   const lists = allLists;
-  // console.log(lists);
 
   useEffect(() => {
     loadAllLists(location);
     return () => {
-      // console.log("unmounting");
       clearAllLists();
     };
   }, []);

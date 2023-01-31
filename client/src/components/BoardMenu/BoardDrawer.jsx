@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Button,
   Drawer,
@@ -37,7 +37,10 @@ const BoardDrawer = ({ isOpen, onClose }) => {
   const [edit, setEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const board = boards.filter((board) => board._id === location);
+  const board = useMemo(
+    () => boards.filter((board) => board._id === location),
+    [boards, location]
+  );
   const { description, createdAt } = board[0];
 
   const getAdminInfo = async (adminId) => {

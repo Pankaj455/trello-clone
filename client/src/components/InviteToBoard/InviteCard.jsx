@@ -19,12 +19,16 @@ import { useAppContext } from "../../context/userContext";
 import { useParams } from "react-router-dom";
 import { customScrollbar } from "../../utils/util";
 import { useListContext } from "../../context/listContext";
+import { useMemo } from "react";
 
 const InviteCard = () => {
   const { _id, boards, addMemberToBoard } = useAppContext();
   const { removeMemberFromBoard } = useListContext();
   const { id } = useParams();
-  const board = boards.filter((board) => board._id === id)[0];
+  const board = useMemo(
+    () => boards.filter((board) => board._id === id)[0],
+    [boards, id]
+  );
   const { onClose } = useDisclosure();
   const inputRef = useRef("");
   const [users, setUsers] = useState(board?.members || []);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import logo from "../../assets/updated-logo-bold.svg";
 import {
   Button,
@@ -18,7 +18,10 @@ const Header = () => {
   const navigate = useNavigate();
   const { id: location } = useParams();
 
-  const board = boards.filter((board) => board._id === location);
+  const board = useMemo(
+    () => boards.filter((board) => board._id === location),
+    [boards, location]
+  );
 
   const logout = () => {
     localStorage.removeItem("auth-token");

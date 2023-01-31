@@ -5,7 +5,6 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverBody,
-  PopoverFooter,
   PopoverCloseButton,
   Text,
   Grid,
@@ -13,6 +12,7 @@ import {
   GridItem,
   useDisclosure,
 } from "@chakra-ui/react";
+import { useMemo } from "react";
 import { useState } from "react";
 import { useListContext } from "../../context/listContext";
 
@@ -22,15 +22,22 @@ const Movecard = ({ listId, listTitle, index, card_id }) => {
   const [selectedList, setSelectedList] = useState(listId);
   const [currPosition, setCurrPosition] = useState(index);
 
-  const currList = allLists.filter((list) => list._id === selectedList)[0];
+  const currList = useMemo(
+    () => allLists.filter((list) => list._id === selectedList)[0],
+    [allLists, selectedList]
+  );
   const totalCards = currList.cards.length;
   if (currPosition > totalCards) {
     setCurrPosition(totalCards);
   }
 
-  const positions = Array.from(
-    { length: selectedList === listId ? totalCards : totalCards + 1 },
-    (_, i) => i + 1
+  const positions = useMemo(
+    () =>
+      Array.from(
+        { length: selectedList === listId ? totalCards : totalCards + 1 },
+        (_, i) => i + 1
+      ),
+    [selectedList, listId, totalCards]
   );
 
   const move = () => {

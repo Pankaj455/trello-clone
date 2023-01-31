@@ -20,9 +20,6 @@ import { useAppContext } from "../../context/userContext";
 const Card = ({ board }) => {
   const { deleteBoard, updateBoard, _id: userId } = useAppContext();
   const coverRef = useRef();
-  const removeBoard = () => {
-    console.log("board has been deleted");
-  };
 
   const handleImageUpload = (e) => {
     const image = e.target.files[0];

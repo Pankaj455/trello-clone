@@ -14,7 +14,6 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 import React, { useRef, useState } from "react";
-import { AiOutlineUser } from "react-icons/ai";
 import { useAppContext } from "../../context/userContext";
 
 const UserDetail = () => {
@@ -31,15 +30,6 @@ const UserDetail = () => {
     if (avatar) {
       await updateProfile({ image, public_id: avatar.public_id });
     } else await uploadProfile(image);
-    // if (!toast.isActive(toastId)) {
-    //   toast({
-    //     id: toastId,
-    //     position: "top-right",
-    //     description: "Profile updated successfully",
-    //     status: "success",
-    //     duration: 2000,
-    //   });
-    // }
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
