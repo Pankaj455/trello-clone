@@ -5,32 +5,13 @@ const cloudinary = require("cloudinary");
 
 const addNewCard = async (req, res) => {
   try {
-    const { board_id, list_id, title } = req.body;
+    const { list_id, title } = req.body;
     const list = await List.findById(list_id);
-    const board = await Board.findById(board_id);
-
-    if (!board) {
-      return res.status(400).json({
-        success: false,
-        message: "Board not found!",
-      });
-    }
 
     if (!list) {
       return res.status(400).json({
         success: false,
         message: "List not found!",
-      });
-    }
-
-    // checking if the user is member of the board or not
-    if (
-      !board.members.includes(req.user._id) &&
-      board.admin.toString() !== req.user._id.toString()
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: "Only board members can create card!",
       });
     }
 
@@ -50,33 +31,11 @@ const addNewCard = async (req, res) => {
     });
   }
 };
+
 const updateCard = async (req, res) => {
   try {
-    const { board_id, card_id, title, description } = req.body;
-    const card = await Card.findById(card_id);
-    // const board = await Board.findById(board_id);
-    // if (!board) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "Board not found!",
-    //   });
-    // }
-    if (!card) {
-      return res.status(404).json({
-        success: false,
-        message: "card not found!",
-      });
-    }
-    // checking if the user is member of the board or not
-    // if (
-    //   !board.members.includes(req.user._id) &&
-    //   board.admin.toString() !== req.user._id.toString()
-    // ) {
-    //   return res.status(403).json({
-    //     success: false,
-    //     message: "Only board members can update card!",
-    //   });
-    // }
+    const { title, description } = req.body;
+    const card = req.card;
 
     if (title) card.title = title;
     if (description) card.description = description;
@@ -95,14 +54,8 @@ const updateCard = async (req, res) => {
 
 const createComment = async (req, res) => {
   try {
-    const { _id, card_id, comment, commentedAt } = req.body;
-    const card = await Card.findById(card_id);
-    if (!card) {
-      res.status(404).json({
-        success: false,
-        message: "Card not found!",
-      });
-    }
+    const { _id, comment, commentedAt } = req.body;
+    const card = req.card;
 
     const newComment = {
       _id,
@@ -128,14 +81,8 @@ const createComment = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   try {
-    const { comment_id, card_id } = req.body;
-    const card = await Card.findById(card_id);
-    if (!card) {
-      res.status(404).json({
-        success: false,
-        message: "Card not found!",
-      });
-    }
+    const { comment_id } = req.body;
+    const card = req.card;
 
     card.comments = card.comments.filter(
       (comment) => comment._id !== comment_id
@@ -191,14 +138,8 @@ const getAllComments = async (req, res) => {
 
 const addMember = async (req, res) => {
   try {
-    const { member_id, card_id } = req.body;
-    const card = await Card.findById(card_id);
-    if (!card) {
-      res.status(404).json({
-        success: false,
-        message: "Card not found!",
-      });
-    }
+    const { member_id } = req.body;
+    const card = req.card;
 
     card.members.push(member_id);
     await card.save();
@@ -217,14 +158,8 @@ const addMember = async (req, res) => {
 
 const removeMember = async (req, res) => {
   try {
-    const { member_id, card_id } = req.body;
-    const card = await Card.findById(card_id);
-    if (!card) {
-      res.status(404).json({
-        success: false,
-        message: "Card not found!",
-      });
-    }
+    const { member_id } = req.body;
+    const card = req.card;
 
     card.members = card.members.filter((member) => member != member_id);
     await card.save();
@@ -243,15 +178,8 @@ const removeMember = async (req, res) => {
 
 const setCover = async (req, res) => {
   try {
-    const { cover, card_id } = req.body;
-    const card = await Card.findById(card_id);
-
-    if (!card) {
-      res.status(404).json({
-        success: false,
-        message: "Card not found!",
-      });
-    }
+    const { cover } = req.body;
+    const card = req.card;
 
     const cloud = await cloudinary.v2.uploader.upload(
       cover,
@@ -288,15 +216,8 @@ const setCover = async (req, res) => {
 
 const updateCover = async (req, res) => {
   try {
-    const { prev_cover_id, cover, card_id } = req.body;
-    const card = await Card.findById(card_id);
-
-    if (!card) {
-      res.status(404).json({
-        success: false,
-        message: "Card not found!",
-      });
-    }
+    const { prev_cover_id, cover } = req.body;
+    const card = req.card;
 
     await cloudinary.v2.uploader.destroy(prev_cover_id, (error) => {
       if (error) {
@@ -343,15 +264,8 @@ const updateCover = async (req, res) => {
 
 const removeCover = async (req, res) => {
   try {
-    const { cover_id, card_id } = req.body;
-    const card = await Card.findById(card_id);
-
-    if (!card) {
-      res.status(404).json({
-        success: false,
-        message: "Card not found!",
-      });
-    }
+    const { cover_id } = req.body;
+    const card = req.card;
 
     await cloudinary.v2.uploader.destroy(cover_id, (error) => {
       if (error) {
@@ -379,16 +293,7 @@ const removeCover = async (req, res) => {
 
 const moveCard = async (req, res) => {
   try {
-    const { fromList, toList, card_id, fromIndex, toIndex } = req.body;
-
-    // verifying that the card to be moved is not deleted by someone first
-    const card = await Card.findById(card_id);
-    if (!card) {
-      return res.status(404).json({
-        success: false,
-        message: "Card not found",
-      });
-    }
+    const { fromList, toList, fromIndex, toIndex } = req.body;
 
     const srcList = await List.findById(fromList);
     if (!srcList) {
@@ -429,39 +334,14 @@ const moveCard = async (req, res) => {
 
 const deleteCard = async (req, res) => {
   try {
-    const { board_id, list_id, cover_id, card_id } = req.body;
+    const { list_id, cover_id, card_id } = req.body;
     const list = await List.findById(list_id);
-    const card = await Card.findById(card_id);
-    const board = await Board.findById(board_id);
-
-    if (!card) {
-      res.status(404).json({
-        success: false,
-        message: "Card not found!",
-      });
-    }
-    if (!board) {
-      return res.status(404).json({
-        success: false,
-        message: "Board not found!",
-      });
-    }
+    const card = req.card;
 
     if (!list) {
       return res.status(404).json({
         success: false,
         message: "List not found!",
-      });
-    }
-
-    // checking if the user is member of the board or not
-    if (
-      !board.members.includes(req.user._id) &&
-      board.admin.toString() !== req.user._id.toString()
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: "Only board members can delete card!",
       });
     }
 

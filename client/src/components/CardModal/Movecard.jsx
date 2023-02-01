@@ -12,8 +12,7 @@ import {
   GridItem,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useMemo } from "react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useListContext } from "../../context/listContext";
 
 const Movecard = ({ listId, listTitle, index, card_id }) => {

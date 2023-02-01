@@ -5,26 +5,9 @@ const cloudinary = require("cloudinary");
 
 const addNewList = async (req, res) => {
   try {
-    const { board_id, title } = req.body;
-    const board = await Board.findById(board_id);
+    const { title } = req.body;
+    const board = req.board;
 
-    if (!board) {
-      return res.status(400).json({
-        success: false,
-        message: "Board not found!",
-      });
-    }
-
-    // checking if the user is member of the board or not
-    if (
-      !board.members.includes(req.user._id) &&
-      board.admin.toString() !== req.user._id.toString()
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: "Only board members can add list!",
-      });
-    }
     const list = await List.create({ title });
     board.lists.push(list._id);
     await board.save();
@@ -43,16 +26,8 @@ const addNewList = async (req, res) => {
 
 const updateList = async (req, res) => {
   try {
-    const { board_id, list_id, title } = req.body;
+    const { list_id, title } = req.body;
     const list = await List.findById(list_id);
-    const board = await Board.findById(board_id);
-
-    if (!board) {
-      return res.status(400).json({
-        success: false,
-        message: "Board not found!",
-      });
-    }
 
     if (!list) {
       return res.status(400).json({
@@ -61,16 +36,6 @@ const updateList = async (req, res) => {
       });
     }
 
-    // checking if the user is member of the board or not
-    if (
-      !board.members.includes(req.user._id) &&
-      board.admin.toString() !== req.user._id.toString()
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: "Only board members can update list!",
-      });
-    }
     list.title = title;
     await list.save();
     res.status(200).json({
@@ -87,32 +52,14 @@ const updateList = async (req, res) => {
 
 const deleteList = async (req, res) => {
   try {
-    const { board_id, list_id } = req.body;
+    const { list_id } = req.body;
     const list = await List.findById(list_id);
-    const board = await Board.findById(board_id);
-
-    if (!board) {
-      return res.status(400).json({
-        success: false,
-        message: "Board not found!",
-      });
-    }
+    const board = req.board;
 
     if (!list) {
       return res.status(400).json({
         success: false,
         message: "List not found!",
-      });
-    }
-
-    // checking if the user is member of the board or not
-    if (
-      !board.members.includes(req.user._id) &&
-      board.admin.toString() !== req.user._id.toString()
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: "Only board members can remove list!",
       });
     }
 

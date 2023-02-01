@@ -123,7 +123,7 @@ const CardModal = ({
 
   const removeCard = async () => {
     setIsRemovingCard(true);
-    await deleteCard(cover ? cover.public_id : null, id, listId, boardId);
+    await deleteCard(cover ? cover.public_id : null, id, listId);
     setIsRemovingCard(false);
   };
 

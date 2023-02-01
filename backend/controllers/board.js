@@ -64,19 +64,6 @@ const addMember = async (req, res) => {
     }
 
     const board = await Board.findById(board_id);
-    if (!board) {
-      return res.status(400).json({
-        success: false,
-        message: "Board not found!",
-      });
-    }
-
-    if (board.admin.toString() !== req.user._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: "Only admin can add members!",
-      });
-    }
 
     // adding user in the board's members
 
@@ -105,29 +92,17 @@ const addMember = async (req, res) => {
     });
   }
 };
+
 const removeMember = async (req, res) => {
   try {
     const { user_id, board_id } = req.body;
     const user = await User.findById(user_id);
+    const board = await Board.findById(board_id);
+
     if (!user) {
       return res.status(404).json({
         success: false,
         message: "User doesn't exist!",
-      });
-    }
-
-    const board = await Board.findById(board_id);
-    if (!board) {
-      return res.status(404).json({
-        success: false,
-        message: "Board not found!",
-      });
-    }
-
-    if (board.admin.toString() !== req.user._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: "Only admin can remove members!",
       });
     }
 
@@ -177,19 +152,6 @@ const updateBoard = async (req, res) => {
       req.body;
 
     const board = await Board.findById(board_id);
-    if (!board) {
-      return res.status(400).json({
-        success: false,
-        message: "Board not found!",
-      });
-    }
-
-    if (board.admin.toString() !== req.user._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: "Only admin can update the board!",
-      });
-    }
 
     if (title) {
       board.title = title;
@@ -246,13 +208,6 @@ const updateBoard = async (req, res) => {
 
 const deleteBoard = async (req, res) => {
   try {
-    /*
-     * delete all the images related to the card cover from the cloudinary
-     * delete all cards and their references from each list
-     * delete all the lists and their references from each of the board
-     * delete the board cover from the cloudinary
-     * delete the board and its reference from all the user collection
-     */
     const board = await Board.findById(req.params.id);
 
     for (let i = 0; i < board.lists.length; i++) {
