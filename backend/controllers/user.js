@@ -1,6 +1,8 @@
 const User = require("../models/User");
 const Card = require("../models/Card");
 const cloudinary = require("cloudinary");
+const crypto = require("crypto");
+const sendEmail = require("../utils/sendEmail");
 
 const getProfile = async (req, res) => {
   try {
@@ -157,6 +159,7 @@ const uploadAvatar = async (req, res) => {
     });
   }
 };
+
 const updateProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -232,6 +235,7 @@ const getUsers = async (req, res) => {
     });
   }
 };
+
 const getAllCards = async (req, res) => {
   try {
     const cards = await Card.find(
@@ -250,11 +254,96 @@ const getAllCards = async (req, res) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Email not found",
+      });
+    }
+
+    const resetToken = user.generateResetToken();
+    await user.save();
+
+    const resetLink = `${req.protocol}://${req.get(
+      "host"
+    )}/user/reset-password/${resetToken}`;
+
+    const message = `<p>Just click the link to reset your password - <a href='${resetLink}'>${resetLink}</a></p>`;
+
+    const isEmailSent = await sendEmail({
+      to: email,
+      subject: "Crello - Password Reset",
+      message,
+    });
+
+    if (isEmailSent) {
+      return res.status(200).json({
+        success: true,
+        message: "Email sent successfully",
+      });
+    } else {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+      await user.save();
+      return res.status(401).json({
+        success: false,
+        message: "Something went wrong. Email is not sent... try again",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(req.params.token)
+      .digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Token is invalid or has expired",
+      });
+    }
+
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password updated!",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 module.exports = {
   getProfile,
   getBoards,
   register,
   login,
+  forgotPassword,
+  resetPassword,
   uploadAvatar,
   getUsers,
   getAllCards,
