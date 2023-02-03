@@ -52,3 +52,27 @@ img.fadeOut {
       scale: 1;
     }
   }
+
+  .not-for-mobiles{
+    display: none;
+    font-size: 1.2rem;
+    padding: 1em;
+    color: #fff;
+  }
+
+  @media screen and (max-width: 600px){
+    #root{
+      background-color: #3182ce;
+      height: 100vh;
+      padding: 0;
+      margin: 0;
+    }
+    #root > *:not(.not-for-mobiles){
+      display: none;
+    }
+
+    .not-for-mobiles{
+      display: block;
+    }
+    
+  }

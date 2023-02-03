@@ -8,10 +8,12 @@ import AppProvider from "./context/userContext";
 import ListDataProvider from "./context/listContext";
 import Forgot from "./components/ForgotPassword/Forgot";
 import Reset from "./components/ForgotPassword/Reset";
+import Fallback from "./components/Fallback";
 
 function App() {
   return (
     <>
+      <Fallback />
       <AppProvider>
         <ListDataProvider>
           <BrowserRouter>
