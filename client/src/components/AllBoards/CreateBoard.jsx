@@ -69,7 +69,12 @@ const CreateBoard = ({ isOpen, onClose }) => {
     onClose();
   };
   return (
-    <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="outside">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      scrollBehavior="outside"
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent maxWidth="340" minHeight="300px">
         <ModalCloseButton
@@ -108,6 +113,7 @@ const CreateBoard = ({ isOpen, onClose }) => {
                 value={title}
                 placeholder="Add board title"
                 fontSize={14}
+                autoFocus
                 onChange={handleInputChange}
               />
               {isError ? (

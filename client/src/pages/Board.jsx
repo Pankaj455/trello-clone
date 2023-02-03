@@ -24,7 +24,7 @@ const Board = () => {
     board[0]?.members.filter((member) => member._id === _id) ? (
       <>
         <Header />
-        <Box padding="2.2em 1.5em 0 1.5em">
+        <Box padding="2.2em 1.5em 0 1.5em" maxWidth="1200px" margin="0 auto">
           <Flex marginBottom="24px">
             <Flex marginLeft="8px" flexGrow={1}>
               <AvatarGroup size="sm" spacing={2}>

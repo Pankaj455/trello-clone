@@ -35,7 +35,7 @@ const Header = () => {
 
   const pathArr = window.location.pathname.split("/");
   return (
-    <header>
+    <header style={{ maxWidth: "1400px", margin: "0 auto" }}>
       <Link to="/boards">
         <img src={logo} alt="Crello Logo" className="logo" />
       </Link>
