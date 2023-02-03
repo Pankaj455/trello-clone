@@ -6,7 +6,6 @@ import {
   Menu,
   MenuButton,
   MenuItem,
-  Divider,
   Button,
   Box,
   Input,
@@ -28,17 +27,17 @@ const List = ({ list, board_id }) => {
 
   const cards = list.cards;
 
-  const createNewCard = (e) => {
+  const createNewCard = async (e) => {
     e.preventDefault();
     const title = cardTitleRef.current.value.trim();
     if (!title) return;
     setIsLoading(true);
-    createCard(title, list._id, board_id);
+    await createCard(title, list._id, board_id);
     setIsLoading(false);
     setAddingCard(false);
   };
 
-  const renameListTitle = (e) => {
+  const renameListTitle = async (e) => {
     e.preventDefault();
     const title = titleRef.current.value;
     if (!title.trim()) {
@@ -48,7 +47,7 @@ const List = ({ list, board_id }) => {
       return;
     }
     setIsLoading(true);
-    updateListTitle(title, list._id, board_id);
+    await updateListTitle(title, list._id, board_id);
     setIsLoading(false);
     setEditTitle(false);
   };

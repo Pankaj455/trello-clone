@@ -29,7 +29,7 @@ const AllBoards = () => {
           >
             {isOpen && <CreateBoard isOpen={isOpen} onClose={onClose} />}
             <Box
-              maxWidth="1200px"
+              maxWidth="1400px"
               padding="2em 5em"
               margin="0 auto"
               backgroundColor="#f8f9fd"

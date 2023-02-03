@@ -10,58 +10,52 @@ import InviteCard from "../components/InviteToBoard/InviteCard";
 import { useMemo } from "react";
 
 const Board = () => {
-  const { _id, boards, isLoading } = useAppContext();
+  const { _id, boards } = useAppContext();
   const { id: location } = useParams();
-
+  const { isAdmin } = useAuth();
   const board = useMemo(
-    () => boards.filter((board) => board._id === location),
+    () => boards.filter((board) => board._id === location)[0],
     [boards, location]
   );
+  const isMember = useMemo(
+    () => board?.members.filter((member) => member._id === _id)[0],
+    [board, _id]
+  );
+  if (!_id) return <Loader />;
 
-  const { isAdmin } = useAuth();
-
-  return !isLoading ? (
-    board[0]?.members.filter((member) => member._id === _id) ? (
-      <>
-        <Header />
-        <Box padding="2.2em 1.5em 0 1.5em" maxWidth="1200px" margin="0 auto">
-          <Flex marginBottom="24px">
-            <Flex marginLeft="8px" flexGrow={1}>
-              <AvatarGroup size="sm" spacing={2}>
-                {board[0].members.map((member) => {
-                  return (
-                    <Avatar
-                      key={member._id}
-                      name={member.name}
-                      src={member.avatar?.url}
-                    />
-                  );
-                })}
-              </AvatarGroup>
-              {isAdmin &&
-                (board[0].members.length === 0 ? (
-                  <Tooltip
-                    hasArrow
-                    label="Invite"
-                    bg="blue.400"
-                    placement="top"
-                  >
-                    <InviteCard />
-                  </Tooltip>
-                ) : (
+  return isMember || isAdmin ? (
+    <>
+      <Header />
+      <Box padding="2.2em 1.5em 0 1.5em" maxWidth="1400px" margin="0 auto">
+        <Flex marginBottom="24px">
+          <Flex marginLeft="8px" flexGrow={1}>
+            <AvatarGroup size="sm" spacing={2} max={6}>
+              {board.members.map((member) => {
+                return (
+                  <Avatar
+                    key={member._id}
+                    name={member.name}
+                    src={member.avatar?.url}
+                  />
+                );
+              })}
+            </AvatarGroup>
+            {isAdmin &&
+              (board.members.length === 0 ? (
+                <Tooltip hasArrow label="Invite" bg="blue.400" placement="top">
                   <InviteCard />
-                ))}
-            </Flex>
-            <BoardMenu />
+                </Tooltip>
+              ) : (
+                <InviteCard />
+              ))}
           </Flex>
-          <ListContainer boards={boards} />
-        </Box>
-      </>
-    ) : (
-      <Navigate to="/boards" />
-    )
+          <BoardMenu />
+        </Flex>
+        <ListContainer boards={boards} />
+      </Box>
+    </>
   ) : (
-    <Loader />
+    <Navigate to="/boards" />
   );
 };
 

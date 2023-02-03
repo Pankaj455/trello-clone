@@ -190,7 +190,7 @@ const setCover = async (req, res) => {
         if (error)
           return res.status(500).json({
             status: false,
-            message: error,
+            message: "Server Error. Couldn't update cover",
           });
       }
     );
@@ -223,7 +223,7 @@ const updateCover = async (req, res) => {
       if (error) {
         return res.status(500).json({
           status: false,
-          message: error,
+          message: "Server Error. Couldn't update cover",
         });
       }
     });
@@ -271,7 +271,7 @@ const removeCover = async (req, res) => {
       if (error) {
         return res.status(500).json({
           status: false,
-          message: error,
+          message: "Server Error. Couldn't remove cover",
         });
       }
     });
@@ -350,7 +350,7 @@ const deleteCard = async (req, res) => {
         if (error) {
           return res.status(500).json({
             status: false,
-            message: error,
+            message: "Server Error. Couldn't delete card",
           });
         }
       });

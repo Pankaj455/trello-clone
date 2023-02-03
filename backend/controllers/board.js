@@ -23,7 +23,7 @@ const createBoard = async (req, res) => {
           if (error) {
             return res.status(500).json({
               success: false,
-              error: "Server error. Couldn't upload cover!",
+              message: "Server error. Couldn't upload cover!",
             });
           }
         }
@@ -167,7 +167,7 @@ const updateBoard = async (req, res) => {
             console.log("update error: ", error);
             return res.status(500).json({
               success: false,
-              error: "Server error. Couldn't update cover!",
+              message: "Server error. Couldn't update cover!",
             });
           }
         });
@@ -180,7 +180,7 @@ const updateBoard = async (req, res) => {
             console.log("upload error: ", error);
             return res.status(500).json({
               success: false,
-              error: "Server error. Couldn't upload cover!",
+              message: "Server error. Couldn't upload cover!",
             });
           }
         }

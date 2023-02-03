@@ -238,11 +238,13 @@ const AppProvider = ({ children }) => {
         });
       }
     } catch (error) {
+      console.log("Error:", error);
       dispatch({
         type: "LOADING_FAILURE",
         payload: error.response.data.message,
       });
-      console.log("Error:", error);
+
+      showPopup("email", "error", error.response?.data?.message);
     }
   };
 

@@ -38,10 +38,10 @@ const BoardDrawer = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const board = useMemo(
-    () => boards.filter((board) => board._id === location),
+    () => boards.filter((board) => board._id === location)[0],
     [boards, location]
   );
-  const { description, createdAt } = board[0];
+  const { description, createdAt } = board;
 
   const getAdminInfo = async (adminId) => {
     setIsLoading(true);
@@ -50,8 +50,8 @@ const BoardDrawer = ({ isOpen, onClose }) => {
   };
 
   useEffect(() => {
-    if (!admin && board[0].admin !== userId) {
-      getAdminInfo(board[0].admin);
+    if (!admin && board.admin !== userId) {
+      getAdminInfo(board.admin);
     }
   }, []);
 
@@ -85,14 +85,12 @@ const BoardDrawer = ({ isOpen, onClose }) => {
             </HStack>
             <HStack
               spacing={4}
-              mb={!description && userId !== board[0].admin ? 0 : 3}
+              mb={!description && userId !== board.admin ? 0 : 3}
             >
               <Avatar
                 size="sm"
-                name={userId === board[0].admin ? name : admin?.name}
-                src={
-                  userId === board[0].admin ? avatar?.url : admin?.avatar?.url
-                }
+                name={userId === board.admin ? name : admin?.name}
+                src={userId === board.admin ? avatar?.url : admin?.avatar?.url}
               />
               <VStack
                 fontFamily="'Poppins', sans-serif"
@@ -100,7 +98,7 @@ const BoardDrawer = ({ isOpen, onClose }) => {
                 alignItems="flex-start"
               >
                 <Text fontSize={12} fontWeight={600} color="#333">
-                  {userId === board[0].admin ? name : admin?.name}
+                  {userId === board.admin ? name : admin?.name}
                 </Text>
                 <Text fontSize={10} fontWeight={500} color="#bdbdbd">
                   {`created at ${formatDate(createdAt)}`}
@@ -112,9 +110,7 @@ const BoardDrawer = ({ isOpen, onClose }) => {
               spacing={4}
               mb={3}
               display={
-                !description && userId !== board[0].admin
-                  ? "none"
-                  : "inline-flex"
+                !description && userId !== board.admin ? "none" : "inline-flex"
               }
             >
               <Button
@@ -129,7 +125,7 @@ const BoardDrawer = ({ isOpen, onClose }) => {
               >
                 Description
               </Button>
-              {userId === board[0].admin && (
+              {userId === board.admin && (
                 <Button
                   variant="outline"
                   size="xs"
@@ -168,7 +164,7 @@ const BoardDrawer = ({ isOpen, onClose }) => {
               )
             )}
 
-            {board.length && board[0].members.length > 0 && (
+            {board?.members.length > 0 && (
               <Box>
                 <Button
                   variant="text"
@@ -185,16 +181,24 @@ const BoardDrawer = ({ isOpen, onClose }) => {
                   Teams
                 </Button>
                 <Box>
-                  {board[0].admin !== userId && admin && (
+                  {(board.admin === userId || admin) && (
                     <HStack alignItems="center" mb={5}>
                       <HStack flexGrow={1} spacing={4}>
-                        <Avatar size="xs" name={name} src={admin.avatar?.url} />
+                        <Avatar
+                          size="xs"
+                          name={board.admin === userId ? name : admin.name}
+                          src={
+                            board.admin === userId
+                              ? avatar?.url
+                              : admin.avatar?.url
+                          }
+                        />
                         <Text
                           fontSize={11}
                           fontWeight={500}
                           fontFamily="'Poppins', sans-serif"
                         >
-                          {admin.name}
+                          {board.admin === userId ? "You" : admin.name}
                         </Text>
                       </HStack>
                       <Text
@@ -207,42 +211,40 @@ const BoardDrawer = ({ isOpen, onClose }) => {
                       </Text>
                     </HStack>
                   )}
-                  {board[0].members.map((member) => {
+                  {board?.members.map((member) => {
                     return (
                       <Box key={member._id}>
-                        {member._id !== userId && (
-                          <HStack key={member._id} alignItems="center" mb={5}>
-                            <HStack flexGrow={1} spacing={4}>
-                              <Avatar
-                                size="xs"
-                                name={member.name}
-                                src={member.avatar?.url}
-                              />
-                              <Text
-                                fontSize={11}
-                                fontWeight={500}
-                                fontFamily="'Poppins', sans-serif"
-                              >
-                                {member.name}
-                              </Text>
-                            </HStack>
-                            {board[0].admin === userId && (
-                              <Button
-                                size="xs"
-                                variant="outline"
-                                colorScheme="orange"
-                                onClick={() =>
-                                  removeMemberFromBoard(
-                                    { _id: member._id, name: member.name },
-                                    board[0]._id
-                                  )
-                                }
-                              >
-                                Remove
-                              </Button>
-                            )}
+                        <HStack key={member._id} alignItems="center" mb={5}>
+                          <HStack flexGrow={1} spacing={4}>
+                            <Avatar
+                              size="xs"
+                              name={member.name}
+                              src={member.avatar?.url}
+                            />
+                            <Text
+                              fontSize={11}
+                              fontWeight={500}
+                              fontFamily="'Poppins', sans-serif"
+                            >
+                              {member._id === userId ? "You" : member.name}
+                            </Text>
                           </HStack>
-                        )}
+                          {board.admin === userId && (
+                            <Button
+                              size="xs"
+                              variant="outline"
+                              colorScheme="orange"
+                              onClick={() =>
+                                removeMemberFromBoard(
+                                  { _id: member._id, name: member.name },
+                                  board._id
+                                )
+                              }
+                            >
+                              Remove
+                            </Button>
+                          )}
+                        </HStack>
                       </Box>
                     );
                   })}

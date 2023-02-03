@@ -7,11 +7,10 @@ const sendEmail = require("../utils/sendEmail");
 const getProfile = async (req, res) => {
   try {
     let user;
-
     if (req.query.id) {
       user = await User.findOne({ _id: req.query.id });
     } else {
-      user = await User.findOne({ _id: req.user._id }).populate({
+      user = await User.findById(req.user._id).populate({
         path: "boards",
         select: "-lists",
         populate: {
@@ -134,7 +133,7 @@ const uploadAvatar = async (req, res) => {
         if (error) {
           return res.status(500).json({
             success: false,
-            message: error,
+            message: "Server Error. Couldn't upload avatar",
           });
         }
       }
@@ -170,7 +169,7 @@ const updateProfile = async (req, res) => {
         if (error) {
           return res.status(500).json({
             success: false,
-            message: error,
+            message: "Server Error. Couldn't update profile",
           });
         }
       });
