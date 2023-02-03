@@ -10,10 +10,11 @@ import {
   InputRightElement,
   Button,
   Icon,
+  Box,
 } from "@chakra-ui/react";
 import { MdEmail, MdHttps } from "react-icons/md";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../context/userContext";
 
 const Login = () => {
@@ -116,6 +117,20 @@ const Login = () => {
             </FormErrorMessage>
           )}
         </FormControl>
+        <Box
+          sx={{
+            textAlign: "right",
+            paddingTop: "6px",
+            paddingRight: "2px",
+            fontFamily: "'Noto-Sans', sans-serif",
+            color: "#828282",
+            "& a:hover": {
+              textDecoration: "underline",
+            },
+          }}
+        >
+          <Link to="/user/forgot-password">Forgot password?</Link>
+        </Box>
         <Button
           size="md"
           colorScheme="blue"

@@ -128,6 +128,7 @@ const AppProvider = ({ children }) => {
       showPopup("upload", "error", error.response.data.message, "top-right");
     }
   };
+
   const updateProfile = async ({ image, public_id, name }) => {
     try {
       dispatch({ type: "LOADING_REQUEST" });
@@ -303,6 +304,47 @@ const AppProvider = ({ children }) => {
     dispatch({ type: "REMOVE_MEMBER", payload });
   };
 
+  const sendEmail = async (email) => {
+    try {
+      dispatch({ type: "LOADING_REQUEST" });
+      const response = await axios.post("/user/forgot/password", { email });
+      if (response.data.success) {
+        dispatch({ type: "LOADING_SUCCESS" });
+        showPopup("email", "info", "Email sent", "top");
+        return 1;
+      }
+    } catch (error) {
+      dispatch({
+        type: "LOADING_FAILURE",
+        payload: error.response?.data?.message,
+      });
+      showPopup("email", "error", error.response?.data?.message);
+      return -1;
+    }
+  };
+
+  const resetPassword = async (password, token) => {
+    try {
+      dispatch({ type: "LOADING_REQUEST" });
+      const response = await axios.put(`/user/reset/password/${token}`, {
+        password,
+      });
+      if (response.data.success) {
+        dispatch({ type: "LOADING_SUCCESS" });
+        showPopup("reset", "success", response.data.message, "top");
+        // 1 indicates password updated
+        return 1;
+      }
+    } catch (error) {
+      dispatch({
+        type: "LOADING_FAILURE",
+        payload: error.response?.data?.message,
+      });
+      showPopup("reset", "error", error.response?.data?.message);
+      return -1;
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -321,6 +363,8 @@ const AppProvider = ({ children }) => {
         addMemberToBoard,
         deleteBoard,
         removeMemberFromUserContext,
+        sendEmail,
+        resetPassword,
       }}
     >
       {children}

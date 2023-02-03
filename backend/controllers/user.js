@@ -317,7 +317,7 @@ const resetPassword = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Token is invalid or has expired",
+        message: "Link is invalid or has expired",
       });
     }
 

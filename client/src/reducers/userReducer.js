@@ -35,6 +35,7 @@ const userReducer = (state, action) => {
       return {
         ...state,
         isLoading: true,
+        error: "",
       };
 
     case "LOADING_SUCCESS":

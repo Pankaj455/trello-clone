@@ -6,6 +6,8 @@ import MyProfile from "./pages/MyProfile";
 import Board from "./pages/Board";
 import AppProvider from "./context/userContext";
 import ListDataProvider from "./context/listContext";
+import Forgot from "./components/ForgotPassword/Forgot";
+import Reset from "./components/ForgotPassword/Reset";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
                 <Route path="/me" element={<MyProfile />} />
               </Route>
               <Route path="/" element={<FormContainer />} />
+              <Route path="/user/forgot-password" element={<Forgot />} />
+              <Route path="/user/reset-password/:token" element={<Reset />} />
             </Routes>
           </BrowserRouter>
         </ListDataProvider>
