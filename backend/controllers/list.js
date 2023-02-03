@@ -81,7 +81,6 @@ const deleteList = async (req, res) => {
             }
           );
         }
-        // console.log(card);
         await card.remove();
         list.cards.filter((item) => item != cardId);
         await list.save();

@@ -21,7 +21,6 @@ const isAuthenticated = (req, res, next) => {
     req.user = user;
     next();
   });
-  //   next();
 };
 
 module.exports = isAuthenticated;

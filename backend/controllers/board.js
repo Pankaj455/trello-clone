@@ -44,7 +44,6 @@ const createBoard = async (req, res) => {
       board: newBoard,
     });
   } catch (error) {
-    // console.log(error);
     return res.status(500).json({
       success: false,
       message: error.message,
@@ -160,11 +159,9 @@ const updateBoard = async (req, res) => {
     } else if (visibility) {
       board.visibility = visibility;
     } else if (newCover) {
-      // console.log("prevCover -> ", prevCover);
       if (prevCover) {
         await cloudinary.v2.uploader.destroy(prevCover.public_id, (error) => {
           if (error) {
-            console.log("update error: ", error);
             return res.status(500).json({
               success: false,
               message: "Server error. Couldn't update cover!",
@@ -177,7 +174,6 @@ const updateBoard = async (req, res) => {
         { folder: "covers" },
         (error) => {
           if (error) {
-            console.log("upload error: ", error);
             return res.status(500).json({
               success: false,
               message: "Server error. Couldn't upload cover!",
@@ -239,7 +235,6 @@ const deleteBoard = async (req, res) => {
     if (board.cover.public_id) {
       await cloudinary.v2.uploader.destroy(board.cover.public_id, (error) => {
         if (error) {
-          console.log(error);
           return res.status(500).json({
             status: false,
             message: "Couldn't delete board cover",
