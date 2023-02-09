@@ -34,6 +34,7 @@ const InviteCard = () => {
   const [users, setUsers] = useState(board?.members || []);
   const [isFetching, setIsFetching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const findUsers = async () => {
     const query = inputRef.current.value.trim();
@@ -52,12 +53,16 @@ const InviteCard = () => {
     }
   };
 
-  const addMember = (user) => {
-    addMemberToBoard(user, board._id);
+  const addMember = async (user) => {
+    setLoading(true);
+    await addMemberToBoard(user, board._id);
+    setLoading(false);
   };
 
-  const removeMember = (user) => {
-    removeMemberFromBoard(user, board._id);
+  const removeMember = async (user) => {
+    setLoading(true);
+    await removeMemberFromBoard(user, board._id);
+    setLoading(false);
   };
 
   const onPopoverClose = () => {
@@ -160,8 +165,7 @@ const InviteCard = () => {
                       size="xs"
                       colorScheme="blue"
                       onClick={() => addMember(user)}
-                      // isLoading={isLoading}
-                      // loadingText="Inviting..."
+                      disabled={loading}
                     >
                       Invite
                     </Button>
@@ -171,8 +175,7 @@ const InviteCard = () => {
                       variant="outline"
                       colorScheme="orange"
                       onClick={() => removeMember(user)}
-                      // isLoading={isLoading}
-                      // loadingText="Removing..."
+                      disabled={loading}
                     >
                       Remove
                     </Button>

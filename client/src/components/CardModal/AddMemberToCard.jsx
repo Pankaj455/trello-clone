@@ -13,7 +13,7 @@ import {
   Avatar,
   VStack,
 } from "@chakra-ui/react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useListContext } from "../../context/listContext";
 import { useAppContext } from "../../context/userContext";
@@ -22,6 +22,7 @@ import useAuth from "../../hooks/useAuth";
 const AddMemberToCard = ({ members, id, listId, children }) => {
   const { addMemberToCard, removeMemberFromCard } = useListContext();
   const { boards } = useAppContext();
+  const [loading, setLoading] = useState(false);
 
   const { id: location } = useParams();
   const board = useMemo(
@@ -36,16 +37,20 @@ const AddMemberToCard = ({ members, id, listId, children }) => {
 
   const { isAdmin } = useAuth();
 
-  const addMember = (member) => {
+  const addMember = async (member) => {
     const newMember = {
       _id: member._id,
       name: member.name,
     };
-    addMemberToCard(id, newMember, listId);
+    setLoading(true);
+    await addMemberToCard(id, newMember, listId);
+    setLoading(false);
   };
 
-  const removeMember = (memberId) => {
-    removeMemberFromCard(id, memberId, listId);
+  const removeMember = async (memberId) => {
+    setLoading(true);
+    await removeMemberFromCard(id, memberId, listId);
+    setLoading(false);
   };
 
   return (
@@ -90,6 +95,7 @@ const AddMemberToCard = ({ members, id, listId, children }) => {
                             e.stopPropagation();
                             addMember(boardMember);
                           }}
+                          disabled={loading}
                         >
                           Invite
                         </Button>
@@ -102,6 +108,7 @@ const AddMemberToCard = ({ members, id, listId, children }) => {
                             e.stopPropagation();
                             removeMember(boardMember._id);
                           }}
+                          disabled={loading}
                         >
                           Remove
                         </Button>

@@ -49,6 +49,12 @@ const BoardDrawer = ({ isOpen, onClose }) => {
     setIsLoading(false);
   };
 
+  const removeFromBoard = async (user) => {
+    setIsLoading(true);
+    await removeMemberFromBoard(user, location);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     if (!admin && board.admin !== userId) {
       getAdminInfo(board.admin);
@@ -235,10 +241,10 @@ const BoardDrawer = ({ isOpen, onClose }) => {
                               variant="outline"
                               colorScheme="orange"
                               onClick={() =>
-                                removeMemberFromBoard(
-                                  { _id: member._id, name: member.name },
-                                  board._id
-                                )
+                                removeFromBoard({
+                                  _id: member._id,
+                                  name: member.name,
+                                })
                               }
                             >
                               Remove
