@@ -8,6 +8,13 @@ const addNewList = async (req, res) => {
     const { title } = req.body;
     const board = req.board;
 
+    if (!board.members.includes(req.user._id)) {
+      return res.status(401).json({
+        success: false,
+        message: "You are no longer a member of this board",
+      });
+    }
+
     const list = await List.create({ title });
     board.lists.push(list._id);
     await board.save();
