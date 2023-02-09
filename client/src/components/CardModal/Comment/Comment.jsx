@@ -16,9 +16,11 @@ import {
 import { MdDelete } from "react-icons/md";
 import { useAppContext } from "../../../context/userContext";
 import { months } from "../../../utils/util";
+import useAuth from "../../../hooks/useAuth";
 
 const Comment = ({ comment, deleteComment }) => {
   const { _id } = useAppContext();
+  const { isAdmin } = useAuth();
   let { commentedAt } = comment;
   commentedAt = new Date(commentedAt);
   const date = commentedAt.getDate();
@@ -49,7 +51,7 @@ const Comment = ({ comment, deleteComment }) => {
             color="#bdbdbd"
           >{`${date} ${months[month]} at ${hour}:${minute}`}</Text>
         </VStack>
-        {comment.user._id === _id && (
+        {(comment.user._id === _id || isAdmin) && (
           <Popover>
             <PopoverTrigger>
               <IconButton

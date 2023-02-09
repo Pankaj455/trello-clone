@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://127.0.0.1:4000/api/v1/",
+  // baseURL: "https://crello-apis-production.up.railway.app/api/v1/",
+  baseURL: "http://localhost:4000/api/v1/",
 });
 
 export default instance;

@@ -2,6 +2,7 @@ import { Button, ButtonGroup, Textarea, Box } from "@chakra-ui/react";
 import { useRef } from "react";
 import { useState } from "react";
 import { MdAdd, MdDescription, MdEdit } from "react-icons/md";
+import { useParams } from "react-router-dom";
 import { useListContext } from "../../context/listContext";
 import useAuth from "../../hooks/useAuth";
 import { customScrollbar } from "../../utils/util";
@@ -11,6 +12,7 @@ const CardDescription = ({ id, listId, description }) => {
   const descriptionRef = useRef();
   const [saving, setSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const { id: boardId } = useParams();
 
   const { isAdmin } = useAuth();
 
@@ -21,7 +23,12 @@ const CardDescription = ({ id, listId, description }) => {
       return;
     }
     setSaving(true);
-    await updateCard({ id, description: cardDescription, list_id: listId });
+    await updateCard({
+      id,
+      description: cardDescription,
+      list_id: listId,
+      board_id: boardId,
+    });
     setSaving(false);
     setIsEditing(false);
   };

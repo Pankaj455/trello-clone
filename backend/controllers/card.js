@@ -7,6 +7,14 @@ const addNewCard = async (req, res) => {
   try {
     const { list_id, title } = req.body;
     const list = await List.findById(list_id);
+    const board = req.board;
+
+    if (!board.members.includes(req.user._id) && board.admin != req.user._id) {
+      return res.status(401).json({
+        success: false,
+        message: "It seems you are no longer a member of this board",
+      });
+    }
 
     if (!list) {
       return res.status(400).json({
@@ -34,8 +42,16 @@ const addNewCard = async (req, res) => {
 
 const updateCard = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, board_id } = req.body;
     const card = req.card;
+    const board = await Board.findById(board_id);
+
+    if (!board.members.includes(req.user._id) && board.admin != req.user._id) {
+      return res.status(401).json({
+        success: false,
+        message: "It seems you are no longer a member of this board",
+      });
+    }
 
     if (title) card.title = title;
     if (description) card.description = description;
@@ -54,8 +70,16 @@ const updateCard = async (req, res) => {
 
 const createComment = async (req, res) => {
   try {
-    const { _id, comment, commentedAt } = req.body;
+    const { _id, comment, commentedAt, board_id } = req.body;
     const card = req.card;
+    const board = await Board.findById(board_id);
+
+    if (!board.members.includes(req.user._id) && board.admin != req.user._id) {
+      return res.status(401).json({
+        success: false,
+        message: "It seems you are no longer a member of this board",
+      });
+    }
 
     const newComment = {
       _id,
@@ -81,8 +105,16 @@ const createComment = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   try {
-    const { comment_id } = req.body;
+    const { comment_id, board_id } = req.body;
     const card = req.card;
+    const board = await Board.findById(board_id);
+
+    if (!board.members.includes(req.user._id) && board.admin != req.user._id) {
+      return res.status(401).json({
+        success: false,
+        message: "It seems you are no longer a member of this board",
+      });
+    }
 
     card.comments = card.comments.filter(
       (comment) => comment._id !== comment_id
@@ -178,8 +210,16 @@ const removeMember = async (req, res) => {
 
 const setCover = async (req, res) => {
   try {
-    const { cover } = req.body;
+    const { cover, board_id } = req.body;
     const card = req.card;
+    const board = await Board.findById(board_id);
+
+    if (!board.members.includes(req.user._id) && board.admin != req.user._id) {
+      return res.status(401).json({
+        success: false,
+        message: "It seems you are no longer a member of this board",
+      });
+    }
 
     const cloud = await cloudinary.v2.uploader.upload(
       cover,
@@ -216,8 +256,16 @@ const setCover = async (req, res) => {
 
 const updateCover = async (req, res) => {
   try {
-    const { prev_cover_id, cover } = req.body;
+    const { prev_cover_id, cover, board_id } = req.body;
     const card = req.card;
+    const board = await Board.findById(board_id);
+
+    if (!board.members.includes(req.user._id) && board.admin != req.user._id) {
+      return res.status(401).json({
+        success: false,
+        message: "It seems you are no longer a member of this board",
+      });
+    }
 
     await cloudinary.v2.uploader.destroy(prev_cover_id, (error) => {
       if (error) {
@@ -264,8 +312,16 @@ const updateCover = async (req, res) => {
 
 const removeCover = async (req, res) => {
   try {
-    const { cover_id } = req.body;
+    const { cover_id, board_id } = req.body;
     const card = req.card;
+    const board = await Board.findById(board_id);
+
+    if (!board.members.includes(req.user._id) && board.admin != req.user._id) {
+      return res.status(401).json({
+        success: false,
+        message: "It seems you are no longer a member of this board",
+      });
+    }
 
     await cloudinary.v2.uploader.destroy(cover_id, (error) => {
       if (error) {
@@ -293,7 +349,15 @@ const removeCover = async (req, res) => {
 
 const moveCard = async (req, res) => {
   try {
-    const { fromList, toList, fromIndex, toIndex } = req.body;
+    const { fromList, toList, fromIndex, toIndex, board_id } = req.body;
+    const board = await Board.findById(board_id);
+
+    if (!board.members.includes(req.user._id) && board.admin != req.user._id) {
+      return res.status(401).json({
+        success: false,
+        message: "It seems you are no longer a member of this board",
+      });
+    }
 
     const srcList = await List.findById(fromList);
     if (!srcList) {

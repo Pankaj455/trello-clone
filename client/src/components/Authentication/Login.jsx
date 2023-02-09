@@ -137,7 +137,8 @@ const Login = () => {
           mt={5}
           width="100%"
           type="submit"
-          disabled={isLoading}
+          loadingText="Log In"
+          isLoading={isLoading}
         >
           Log In
         </Button>

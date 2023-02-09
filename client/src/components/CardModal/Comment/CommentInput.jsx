@@ -9,17 +9,20 @@ import {
 } from "@chakra-ui/react";
 import Comment from "./Comment";
 import { customScrollbar } from "../../../utils/util";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useListContext } from "../../../context/listContext";
 import { v4 as uuidv4 } from "uuid";
 import { useAppContext } from "../../../context/userContext";
+import { useParams } from "react-router-dom";
 
 const CommentInput = ({ comments, id, listId }) => {
   const { name, avatar } = useAppContext();
   const { createNewComment, removeComment } = useListContext();
+  const [loading, setLoading] = useState(false);
   const commentRef = useRef();
+  const { id: boardId } = useParams();
 
-  const createComment = (e) => {
+  const createComment = async (e) => {
     e.preventDefault();
     const newComment = commentRef.current.value.trim();
     if (!newComment) return;
@@ -29,11 +32,13 @@ const CommentInput = ({ comments, id, listId }) => {
       comment: newComment,
       commentedAt: new Date(),
     };
-    createNewComment(newCommentObj, id, listId);
+    setLoading(true);
+    await createNewComment(newCommentObj, id, listId, boardId);
+    setLoading(false);
   };
 
   const deleteComment = (comment_id) => {
-    removeComment(comment_id, id, listId);
+    removeComment(comment_id, id, listId, boardId);
   };
 
   return (
@@ -70,6 +75,7 @@ const CommentInput = ({ comments, id, listId }) => {
             display="block"
             size="sm"
             marginLeft="auto"
+            isLoading={loading}
           >
             Comment
           </Button>

@@ -71,7 +71,8 @@ const CardModal = ({
   const { id: boardId } = useParams();
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [loadingComments, setLoadingComments] = useState(true);
   const [coverLoadingText, setCoverLoadingText] = useState();
   const [isRemovingCard, setIsRemovingCard] = useState(false);
   const titleRef = useRef();
@@ -81,7 +82,7 @@ const CardModal = ({
 
   const loadCardData = async () => {
     await loadComments(listId, id);
-    setLoading(false);
+    setLoadingComments(false);
   };
 
   useEffect(() => {
@@ -96,7 +97,14 @@ const CardModal = ({
       setIsEditingTitle(false);
       return;
     }
-    await updateCard({ id, title: cardTitle, list_id: listId });
+    setLoading(true);
+    await updateCard({
+      id,
+      title: cardTitle,
+      list_id: listId,
+      board_id: boardId,
+    });
+    setLoading(false);
     setIsEditingTitle(false);
   };
 
@@ -106,9 +114,15 @@ const CardModal = ({
       const reader = new FileReader();
       reader.onloadend = function () {
         if (cover) {
-          updateCover(cover.public_id, reader.result.toString(), id, listId);
+          updateCover(
+            cover.public_id,
+            reader.result.toString(),
+            id,
+            listId,
+            boardId
+          );
         } else {
-          setCover(reader.result.toString(), id, listId);
+          setCover(reader.result.toString(), id, listId, boardId);
         }
       };
       reader.readAsDataURL(image);
@@ -117,7 +131,7 @@ const CardModal = ({
   };
 
   const removeCardCover = () => {
-    removeCover(cover, id, listId);
+    removeCover(cover, id, listId, boardId);
     imgRef.current.value = null;
   };
 
@@ -160,7 +174,12 @@ const CardModal = ({
               {isEditingTitle ? (
                 <form onSubmit={updateTitle}>
                   <Input ref={titleRef} defaultValue={title} mb={1} autoFocus />
-                  <Button type="submit" size="xs" colorScheme={"blue"}>
+                  <Button
+                    type="submit"
+                    size="xs"
+                    colorScheme={"blue"}
+                    isLoading={loading}
+                  >
                     <AiOutlineCheck />
                   </Button>
                   <Button
@@ -214,7 +233,7 @@ const CardModal = ({
                   />
                 )
               )}
-              {!loading ? (
+              {!loadingComments ? (
                 <CommentInput comments={comments} id={id} listId={listId} />
               ) : (
                 <Box padding="4" boxShadow="lg" bg="white">
@@ -309,46 +328,47 @@ const CardModal = ({
                   Cover
                 </Button>
               )}
-
-              <Popover isOpen={isPopoverOpen} onClose={onPopoverClose}>
-                <PopoverTrigger>
-                  <Button
-                    width="100%"
-                    colorScheme="red"
-                    leftIcon={<AiOutlineDelete />}
-                    justifyContent="flex-start"
-                    size="sm"
-                    style={{ color: "white" }}
-                    onClick={onPopoverToggle}
-                    isLoading={isRemovingCard}
-                    loadingText="Deleting..."
-                  >
-                    Delete Card
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <PopoverArrow />
-                  <PopoverBody>
-                    This card will be deleted permanently. Are you sure want to
-                    delete it?
-                  </PopoverBody>
-                  <PopoverFooter border="0" display="flex" pb={4}>
-                    <ButtonGroup spacing="3">
-                      <Button
-                        colorScheme="red"
-                        size="sm"
-                        onClick={removeCard}
-                        disabled={isRemovingCard}
-                      >
-                        Yes
-                      </Button>
-                      <Button size="sm" onClick={onPopoverClose}>
-                        No
-                      </Button>
-                    </ButtonGroup>
-                  </PopoverFooter>
-                </PopoverContent>
-              </Popover>
+              {isAdmin && (
+                <Popover isOpen={isPopoverOpen} onClose={onPopoverClose}>
+                  <PopoverTrigger>
+                    <Button
+                      width="100%"
+                      colorScheme="red"
+                      leftIcon={<AiOutlineDelete />}
+                      justifyContent="flex-start"
+                      size="sm"
+                      style={{ color: "white" }}
+                      onClick={onPopoverToggle}
+                      isLoading={isRemovingCard}
+                      loadingText="Deleting..."
+                    >
+                      Delete Card
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverBody>
+                      This card will be deleted permanently. Are you sure want
+                      to delete it?
+                    </PopoverBody>
+                    <PopoverFooter border="0" display="flex" pb={4}>
+                      <ButtonGroup spacing="3">
+                        <Button
+                          colorScheme="red"
+                          size="sm"
+                          onClick={removeCard}
+                          disabled={isRemovingCard}
+                        >
+                          Yes
+                        </Button>
+                        <Button size="sm" onClick={onPopoverClose}>
+                          No
+                        </Button>
+                      </ButtonGroup>
+                    </PopoverFooter>
+                  </PopoverContent>
+                </Popover>
+              )}
             </GridItem>
           </Grid>
         </ModalBody>

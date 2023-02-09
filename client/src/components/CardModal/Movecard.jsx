@@ -13,6 +13,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useListContext } from "../../context/listContext";
 
 const Movecard = ({ listId, listTitle, index, card_id }) => {
@@ -20,6 +21,7 @@ const Movecard = ({ listId, listTitle, index, card_id }) => {
   const { isOpen, onClose, onToggle } = useDisclosure();
   const [selectedList, setSelectedList] = useState(listId);
   const [currPosition, setCurrPosition] = useState(index);
+  const { id } = useParams();
 
   const currList = useMemo(
     () => allLists.filter((list) => list._id === selectedList)[0],
@@ -40,7 +42,7 @@ const Movecard = ({ listId, listTitle, index, card_id }) => {
   );
 
   const move = () => {
-    moveCard(listId, selectedList, index, currPosition, card_id);
+    moveCard(listId, selectedList, index, currPosition, card_id, id);
     onClose();
   };
 

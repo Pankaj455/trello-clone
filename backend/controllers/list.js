@@ -8,10 +8,10 @@ const addNewList = async (req, res) => {
     const { title } = req.body;
     const board = req.board;
 
-    if (!board.members.includes(req.user._id)) {
+    if (!board.members.includes(req.user._id) && board.admin != req.user._id) {
       return res.status(401).json({
         success: false,
-        message: "You are no longer a member of this board",
+        message: "It seems you are no longer a member of this board",
       });
     }
 
@@ -35,6 +35,14 @@ const updateList = async (req, res) => {
   try {
     const { list_id, title } = req.body;
     const list = await List.findById(list_id);
+    const board = req.board;
+
+    if (!board.members.includes(req.user._id) && board.admin != req.user._id) {
+      return res.status(401).json({
+        success: false,
+        message: "It seems you are no longer a member of this board",
+      });
+    }
 
     if (!list) {
       return res.status(400).json({
@@ -63,6 +71,12 @@ const deleteList = async (req, res) => {
     const list = await List.findById(list_id);
     const board = req.board;
 
+    if (!board.members.includes(req.user._id) && board.admin != req.user._id) {
+      return res.status(401).json({
+        success: false,
+        message: "It seems you are no longer a member of this board",
+      });
+    }
     if (!list) {
       return res.status(400).json({
         success: false,

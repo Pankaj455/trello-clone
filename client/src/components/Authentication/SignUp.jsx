@@ -155,7 +155,8 @@ const SignUp = () => {
           mt={5}
           width="100%"
           type="submit"
-          disabled={isLoading}
+          loadingText="Sign Up"
+          isLoading={isLoading}
         >
           Sign Up
         </Button>

@@ -157,13 +157,14 @@ const ListDataProvider = ({ children }) => {
     }
   };
 
-  const updateCard = async ({ id, title, description, list_id }) => {
+  const updateCard = async ({ id, title, description, list_id, board_id }) => {
     try {
       const response = await axios.put(
         "/board/card/update",
         {
           card_id: id,
           title,
+          board_id,
           description,
         },
         {
@@ -189,13 +190,14 @@ const ListDataProvider = ({ children }) => {
     }
   };
 
-  const createNewComment = async (newComment, card_id, list_id) => {
+  const createNewComment = async (newComment, card_id, list_id, board_id) => {
     try {
       const response = await axios.post(
         "/board/card/comment/new",
         {
           ...newComment,
           card_id,
+          board_id,
         },
         {
           headers: {
@@ -225,13 +227,14 @@ const ListDataProvider = ({ children }) => {
     }
   };
 
-  const removeComment = async (comment_id, card_id, list_id) => {
+  const removeComment = async (comment_id, card_id, list_id, board_id) => {
     try {
       const response = await axios.post(
         "/board/card/comment/delete",
         {
           comment_id,
           card_id,
+          board_id,
         },
         {
           headers: {
@@ -342,12 +345,12 @@ const ListDataProvider = ({ children }) => {
     }
   };
 
-  const setCover = async (cover, card_id, list_id) => {
+  const setCover = async (cover, card_id, list_id, board_id) => {
     try {
       dispatch({ type: "UPLOADING_REQUEST" });
       const response = await axios.post(
         "/board/card/setCover",
-        { card_id, cover },
+        { card_id, cover, board_id },
         {
           headers: {
             token: localStorage.getItem("auth-token"),
@@ -373,12 +376,12 @@ const ListDataProvider = ({ children }) => {
     }
   };
 
-  const removeCover = async (cover, card_id, list_id) => {
+  const removeCover = async (cover, card_id, list_id, board_id) => {
     try {
       dispatch({ type: "UPLOADING_REQUEST" });
       const response = await axios.put(
         "/board/card/removeCover",
-        { card_id, cover_id: cover.public_id },
+        { card_id, cover_id: cover.public_id, board_id },
         {
           headers: {
             token: localStorage.getItem("auth-token"),
@@ -404,12 +407,18 @@ const ListDataProvider = ({ children }) => {
     }
   };
 
-  const updateCover = async (prev_cover_id, cover, card_id, list_id) => {
+  const updateCover = async (
+    prev_cover_id,
+    cover,
+    card_id,
+    list_id,
+    board_id
+  ) => {
     try {
       dispatch({ type: "UPLOADING_REQUEST" });
       const response = await axios.put(
         "/board/card/updateCover",
-        { card_id, cover, prev_cover_id },
+        { card_id, cover, prev_cover_id, board_id },
         {
           headers: {
             token: localStorage.getItem("auth-token"),
@@ -435,14 +444,21 @@ const ListDataProvider = ({ children }) => {
     }
   };
 
-  const moveCard = async (fromList, toList, fromIndex, toIndex, card_id) => {
+  const moveCard = async (
+    fromList,
+    toList,
+    fromIndex,
+    toIndex,
+    card_id,
+    board_id
+  ) => {
     if (fromList === toList && fromIndex === toIndex) {
       return;
     }
     try {
       const response = await axios.put(
         "/board/card/move",
-        { card_id, fromList, toList, fromIndex, toIndex },
+        { card_id, fromList, toList, fromIndex, toIndex, board_id },
         {
           headers: {
             token: localStorage.getItem("auth-token"),

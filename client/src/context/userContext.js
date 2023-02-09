@@ -261,6 +261,7 @@ const AppProvider = ({ children }) => {
       );
       if (response.data.success) {
         dispatch({ type: "ADD_MEMBER", payload: { user, board_id } });
+        showPopup("add-member", "success", response.data.message);
       }
     } catch (error) {
       console.log("Error: ", error);
