@@ -69,6 +69,7 @@ const CardDescription = ({ id, listId, description }) => {
             fontFamily="'Noto Sans', serif"
             fontWeight={400}
             height="80px"
+            autoFocus
             mb={2}
             ref={descriptionRef}
             defaultValue={description}

@@ -27,6 +27,7 @@ const EditDescription = ({ setEdit, boardId, description }) => {
         fontSize={14}
         fontFamily="'Noto Sans', serif"
         fontWeight={400}
+        autoFocus
         height="250px"
         mb={2}
         value={value}

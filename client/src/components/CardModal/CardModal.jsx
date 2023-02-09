@@ -29,6 +29,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { AiOutlineCheck, AiOutlineDelete } from "react-icons/ai";
+import Loader from "../Loader/Loader";
 import { MdClose, MdImage, MdPeople } from "react-icons/md";
 import CardDescription from "./CardDescription";
 import { useState, useRef } from "react";
@@ -157,221 +158,223 @@ const CardModal = ({
             },
           }}
         />
-        <ModalBody pt={5} pb={5} width="100%">
-          {cover && (
-            <Image
-              width="100%"
-              height="160px"
-              bg="#80808024"
-              borderRadius="12px"
-              mb={3}
-              src={cover.url}
-              objectFit="contain"
-            />
-          )}
-          <Grid templateColumns="3fr 1fr" gap="15px">
-            <GridItem>
-              {isEditingTitle ? (
-                <form onSubmit={updateTitle}>
-                  <Input ref={titleRef} defaultValue={title} mb={1} autoFocus />
-                  <Button
-                    type="submit"
-                    size="xs"
-                    colorScheme={"blue"}
-                    isLoading={loading}
-                  >
-                    <AiOutlineCheck />
-                  </Button>
-                  <Button
-                    size="xs"
-                    ml={1}
-                    onClick={() => setIsEditingTitle(false)}
-                  >
-                    <MdClose />
-                  </Button>
-                </form>
-              ) : (
-                <Flex onClick={(e) => setIsEditingTitle(true)} cursor="text">
-                  <Text
-                    fontFamily="'Noto Sans', serif"
-                    fontWeight="400"
-                    fontSize="16px"
-                  >
-                    {title}
-                  </Text>
-                </Flex>
-              )}
-              <Text
-                as="span"
-                fontSize="11px"
-                fontFamily="'Poppins', sans-serif"
-                fontWeight="600"
-                color="#BDBDBD"
-                display="inline-block"
-                mb="18px"
-              >
-                in list &nbsp;
-                <Movecard
-                  listId={listId}
-                  index={index}
-                  listTitle={listTitle}
-                  card_id={id}
-                />
-              </Text>
-              {description ? (
-                <CardDescription
-                  id={id}
-                  listId={listId}
-                  description={description}
-                />
-              ) : (
-                isAdmin && (
+        {loadingComments ? (
+          <Loader width="80px" />
+        ) : (
+          <ModalBody pt={5} pb={5} width="100%">
+            {cover && (
+              <Image
+                width="100%"
+                height="160px"
+                bg="#80808024"
+                borderRadius="12px"
+                mb={3}
+                src={cover.url}
+                objectFit="contain"
+              />
+            )}
+            <Grid templateColumns="3fr 1fr" gap="15px">
+              <GridItem>
+                {isEditingTitle ? (
+                  <form onSubmit={updateTitle}>
+                    <Input
+                      ref={titleRef}
+                      defaultValue={title}
+                      mb={1}
+                      autoFocus
+                    />
+                    <Button
+                      type="submit"
+                      size="xs"
+                      colorScheme={"blue"}
+                      isLoading={loading}
+                    >
+                      <AiOutlineCheck />
+                    </Button>
+                    <Button
+                      size="xs"
+                      ml={1}
+                      onClick={() => setIsEditingTitle(false)}
+                    >
+                      <MdClose />
+                    </Button>
+                  </form>
+                ) : (
+                  <Flex onClick={(e) => setIsEditingTitle(true)} cursor="text">
+                    <Text
+                      fontFamily="'Noto Sans', serif"
+                      fontWeight="400"
+                      fontSize="16px"
+                    >
+                      {title}
+                    </Text>
+                  </Flex>
+                )}
+                <Text
+                  as="span"
+                  fontSize="11px"
+                  fontFamily="'Poppins', sans-serif"
+                  fontWeight="600"
+                  color="#BDBDBD"
+                  display="inline-block"
+                  mb="18px"
+                >
+                  in list &nbsp;
+                  <Movecard
+                    listId={listId}
+                    index={index}
+                    listTitle={listTitle}
+                    card_id={id}
+                  />
+                </Text>
+                {description ? (
                   <CardDescription
                     id={id}
                     listId={listId}
                     description={description}
                   />
-                )
-              )}
-              {!loadingComments ? (
+                ) : (
+                  isAdmin && (
+                    <CardDescription
+                      id={id}
+                      listId={listId}
+                      description={description}
+                    />
+                  )
+                )}
                 <CommentInput comments={comments} id={id} listId={listId} />
-              ) : (
-                <Box padding="4" boxShadow="lg" bg="white">
-                  <SkeletonCircle size="10" />
-                  <SkeletonText mt="4" noOfLines={3} spacing="2" />
-                </Box>
-              )}
-            </GridItem>
-            <GridItem
-              marginTop="20px"
-              sx={{
-                "& > button": {
-                  color: "#828282",
-                  fontFamily: "'Poppins', sans-serif",
-                  fontSize: "12px",
-                  fontWeight: 500,
-                },
-              }}
-            >
-              <HStack
-                fontSize={11}
-                fontWeight={500}
-                color="#BDBDBD"
-                fontFamily="'Poppins', sans-serif"
-                mb={3}
+              </GridItem>
+              <GridItem
+                marginTop="20px"
+                sx={{
+                  "& > button": {
+                    color: "#828282",
+                    fontFamily: "'Poppins', sans-serif",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                  },
+                }}
               >
-                <FaUserCircle />
-                <Text>Actions</Text>
-              </HStack>
-              <AddMemberToCard members={members} id={id} listId={listId}>
-                <Button
-                  width="100%"
-                  justifyContent="flex-start"
-                  leftIcon={<MdPeople />}
-                  size="sm"
-                  mb={2}
+                <HStack
+                  fontSize={11}
+                  fontWeight={500}
+                  color="#BDBDBD"
+                  fontFamily="'Poppins', sans-serif"
+                  mb={3}
                 >
-                  Members
-                </Button>
-              </AddMemberToCard>
+                  <FaUserCircle />
+                  <Text>Actions</Text>
+                </HStack>
+                <AddMemberToCard members={members} id={id} listId={listId}>
+                  <Button
+                    width="100%"
+                    justifyContent="flex-start"
+                    leftIcon={<MdPeople />}
+                    size="sm"
+                    mb={2}
+                  >
+                    Members
+                  </Button>
+                </AddMemberToCard>
 
-              <input
-                type="file"
-                ref={imgRef}
-                style={{ display: "none" }}
-                onChange={handleImageUpload}
-              />
-              {cover ? (
-                <Menu>
-                  <MenuButton
-                    as={Button}
+                <input
+                  type="file"
+                  ref={imgRef}
+                  style={{ display: "none" }}
+                  onChange={handleImageUpload}
+                />
+                {cover ? (
+                  <Menu>
+                    <MenuButton
+                      as={Button}
+                      width="100%"
+                      leftIcon={<MdImage />}
+                      textAlign="start"
+                      size="sm"
+                      mb={2}
+                      isLoading={isUploading}
+                      loadingText={coverLoadingText}
+                    >
+                      Cover
+                    </MenuButton>
+                    <MenuList>
+                      <MenuItem
+                        onClick={() => {
+                          setCoverLoadingText("Updating");
+                          imgRef.current.click();
+                        }}
+                      >
+                        Update Cover
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          setCoverLoadingText("Removing");
+                          removeCardCover();
+                        }}
+                      >
+                        Remove
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                ) : (
+                  <Button
                     width="100%"
                     leftIcon={<MdImage />}
-                    textAlign="start"
+                    justifyContent="flex-start"
                     size="sm"
                     mb={2}
                     isLoading={isUploading}
-                    loadingText={coverLoadingText}
+                    loadingText="Uploading"
+                    onClick={() => imgRef.current.click()}
                   >
                     Cover
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem
-                      onClick={() => {
-                        setCoverLoadingText("Updating");
-                        imgRef.current.click();
-                      }}
-                    >
-                      Update Cover
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        setCoverLoadingText("Removing");
-                        removeCardCover();
-                      }}
-                    >
-                      Remove
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              ) : (
-                <Button
-                  width="100%"
-                  leftIcon={<MdImage />}
-                  justifyContent="flex-start"
-                  size="sm"
-                  mb={2}
-                  isLoading={isUploading}
-                  loadingText="Uploading"
-                  onClick={() => imgRef.current.click()}
-                >
-                  Cover
-                </Button>
-              )}
-              {isAdmin && (
-                <Popover isOpen={isPopoverOpen} onClose={onPopoverClose}>
-                  <PopoverTrigger>
-                    <Button
-                      width="100%"
-                      colorScheme="red"
-                      leftIcon={<AiOutlineDelete />}
-                      justifyContent="flex-start"
-                      size="sm"
-                      style={{ color: "white" }}
-                      onClick={onPopoverToggle}
-                      isLoading={isRemovingCard}
-                      loadingText="Deleting..."
-                    >
-                      Delete Card
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverBody>
-                      This card will be deleted permanently. Are you sure want
-                      to delete it?
-                    </PopoverBody>
-                    <PopoverFooter border="0" display="flex" pb={4}>
-                      <ButtonGroup spacing="3">
-                        <Button
-                          colorScheme="red"
-                          size="sm"
-                          onClick={removeCard}
-                          disabled={isRemovingCard}
-                        >
-                          Yes
-                        </Button>
-                        <Button size="sm" onClick={onPopoverClose}>
-                          No
-                        </Button>
-                      </ButtonGroup>
-                    </PopoverFooter>
-                  </PopoverContent>
-                </Popover>
-              )}
-            </GridItem>
-          </Grid>
-        </ModalBody>
+                  </Button>
+                )}
+                {isAdmin && (
+                  <Popover isOpen={isPopoverOpen} onClose={onPopoverClose}>
+                    <PopoverTrigger>
+                      <Button
+                        width="100%"
+                        colorScheme="red"
+                        leftIcon={<AiOutlineDelete />}
+                        justifyContent="flex-start"
+                        size="sm"
+                        style={{ color: "white" }}
+                        onClick={onPopoverToggle}
+                        isLoading={isRemovingCard}
+                        loadingText="Deleting..."
+                      >
+                        Delete Card
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverArrow />
+                      <PopoverBody>
+                        This card will be deleted permanently. Are you sure want
+                        to delete it?
+                      </PopoverBody>
+                      <PopoverFooter border="0" display="flex" pb={4}>
+                        <ButtonGroup spacing="3">
+                          <Button
+                            colorScheme="red"
+                            size="sm"
+                            onClick={removeCard}
+                            disabled={isRemovingCard}
+                          >
+                            Yes
+                          </Button>
+                          <Button size="sm" onClick={onPopoverClose}>
+                            No
+                          </Button>
+                        </ButtonGroup>
+                      </PopoverFooter>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </GridItem>
+            </Grid>
+          </ModalBody>
+        )}
       </ModalContent>
     </Modal>
   );
