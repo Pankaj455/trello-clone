@@ -23,7 +23,7 @@ const Reset = () => {
   const [showPass, setShowPass] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showConfirmPass, setShowConfirmPass] = useState(false);
-  const [status, setStatus] = useState(0);
+  const [status, setStatus] = useState(1);
   const { token } = useParams();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,16 +50,19 @@ const Reset = () => {
     <Flex height="100vh" justifyContent="center" alignItems="center">
       <Container maxW="400px" boxShadow="0 0 8px rgba(0, 0, 0, 0.15)" p={4}>
         {status === 1 ? (
-          <Center>
+          <>
+            <Text fontSize="3xl">Password Updated</Text>
+            <Text fontSize="lg" color="#000000a2" mb={4}>
+              Your password has been successfully changed.
+            </Text>
             <Text fontSize="lg">
-              Go to{" "}
               <Link to="/" style={{ marginLeft: "6px" }}>
                 <Button colorScheme="blue" size="sm">
-                  Login
+                  Login now
                 </Button>
               </Link>
             </Text>
-          </Center>
+          </>
         ) : (
           <>
             <Center>

@@ -267,9 +267,7 @@ const forgotPassword = async (req, res) => {
     const resetToken = user.generateResetToken();
     await user.save();
 
-    const resetLink = `${req.protocol}://${req.get(
-      "host"
-    )}/user/reset-password/${resetToken}`;
+    const resetLink = `https://tcrello.netlify.app/user/reset-password/${resetToken}`;
 
     const message = `<p>Just click the link to reset your password - <a href='${resetLink}'>${resetLink}</a></p>`;
 
