@@ -55,7 +55,6 @@ const Card = ({ title, cover }) => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          background: "rgb(201, 217, 208)",
           background:
             "linear-gradient(90deg, rgba(201, 217, 208, 1) 0%,rgba(219, 243, 229, 1) 33%,rgba(213, 220, 217, 1) 65%)",
           borderRadius: "8px",

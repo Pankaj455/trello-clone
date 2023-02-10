@@ -5,14 +5,12 @@ import {
   Avatar,
   Box,
   Flex,
-  Button,
   Menu,
   MenuButton,
   IconButton,
   MenuList,
   MenuItem,
   Portal,
-  Spinner,
 } from "@chakra-ui/react";
 import { TbDotsVertical } from "react-icons/tb";
 import { useAppContext } from "../../context/userContext";
@@ -62,7 +60,6 @@ const Card = ({ board }) => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          background: "rgb(201, 217, 208)",
           background:
             "linear-gradient(90deg, rgba(201, 217, 208, 1) 0%,rgba(219, 243, 229, 1) 33%,rgba(213, 220, 217, 1) 65%)",
           borderRadius: "8px",
