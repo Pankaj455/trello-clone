@@ -2,7 +2,7 @@
 
 <div align="center">
   <h3>
-    <a href="https://ccrello.netlify.app">
+    <a href="https://ccrello.netlify.app" target="_blank">
       Check it now
     </a>
   </h3>
@@ -12,7 +12,7 @@
 ## Technology Used
 
 - React
-- Cloudinary
+- Cloudinary (Platform to store images)
 - Chakra UI (React Components Framework)
 - ExpressJS
 - MongoDB
