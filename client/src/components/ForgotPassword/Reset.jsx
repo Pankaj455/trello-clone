@@ -23,7 +23,7 @@ const Reset = () => {
   const [showPass, setShowPass] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showConfirmPass, setShowConfirmPass] = useState(false);
-  const [status, setStatus] = useState(1);
+  const [status, setStatus] = useState(0);
   const { token } = useParams();
   const handleSubmit = async (e) => {
     e.preventDefault();
