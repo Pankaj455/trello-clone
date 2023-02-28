@@ -50,7 +50,6 @@ const Login = () => {
   return (
     <>
       <Image boxSize="150px" objectFit="fill" src={logo} alt="Logo" />
-
       <form onSubmit={handleSubmit}>
         <FormControl isInvalid={isEmailErr}>
           <InputGroup>
