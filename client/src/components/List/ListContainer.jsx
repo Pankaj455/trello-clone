@@ -5,9 +5,10 @@ import { useParams } from "react-router-dom";
 import List from "./List";
 import { customScrollbar } from "../../utils/util";
 import { useListContext } from "../../context/listContext";
+import Loader from "../Loader/Loader";
 
 const ListContainer = () => {
-  const { addNewList, clearAllLists, loadAllLists, allLists } =
+  const { addNewList, clearAllLists, loadAllLists, allLists, isUploading } =
     useListContext();
   const [addingList, setAddingList] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,55 +50,73 @@ const ListContainer = () => {
       overflowX="auto"
       sx={customScrollbar}
     >
-      {lists &&
-        lists.map((li, index) => {
-          return (
-            <List key={li._id} list={li} index={index} board_id={location} />
-          );
-        })}
-      <Box w="260px" height="fit-content" flexShrink={0}>
-        {addingList ? (
-          <>
-            <form onSubmit={createNewList}>
-              <Input ref={listInputRef} bg="white" mb={1} autoFocus />
+      {isUploading ? (
+        <Flex
+          height="200px"
+          width="100%"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Loader width="80px" />
+        </Flex>
+      ) : (
+        <>
+          {lists &&
+            lists.map((li, index) => {
+              return (
+                <List
+                  key={li._id}
+                  list={li}
+                  index={index}
+                  board_id={location}
+                />
+              );
+            })}
+          <Box w="260px" height="fit-content" flexShrink={0}>
+            {addingList ? (
+              <>
+                <form onSubmit={createNewList}>
+                  <Input ref={listInputRef} bg="white" mb={1} autoFocus />
+                  <Button
+                    size="sm"
+                    type="submit"
+                    colorScheme="blue"
+                    isLoading={loading}
+                    loadingText="Adding..."
+                  >
+                    Add list
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    ml={2}
+                    onClick={() => setAddingList(false)}
+                  >
+                    Cancel
+                  </Button>
+                </form>
+              </>
+            ) : (
               <Button
-                size="sm"
-                type="submit"
-                colorScheme="blue"
-                isLoading={loading}
-                loadingText="Adding..."
+                leftIcon={<MdAdd />}
+                width="100%"
+                justifyContent="flex-start"
+                fontFamily="'Noto Sans', serif"
+                fontSize="14px"
+                fontWeight="500"
+                color="#2F80ED"
+                bg="#DAE4FD"
+                _hover={{
+                  bg: "#DAE4FDc2",
+                }}
+                onClick={() => setAddingList(true)}
               >
-                Add list
+                Add {lists?.length === 0 ? "a" : "another"} list
               </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                ml={2}
-                onClick={() => setAddingList(false)}
-              >
-                Cancel
-              </Button>
-            </form>
-          </>
-        ) : (
-          <Button
-            leftIcon={<MdAdd />}
-            width="100%"
-            justifyContent="flex-start"
-            fontFamily="'Noto Sans', serif"
-            fontSize="14px"
-            fontWeight="500"
-            color="#2F80ED"
-            bg="#DAE4FD"
-            _hover={{
-              bg: "#DAE4FDc2",
-            }}
-            onClick={() => setAddingList(true)}
-          >
-            Add {lists?.length === 0 ? "a" : "another"} list
-          </Button>
-        )}
-      </Box>
+            )}
+          </Box>
+        </>
+      )}
     </Flex>
   );
 };

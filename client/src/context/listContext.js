@@ -20,13 +20,16 @@ const ListDataProvider = ({ children }) => {
 
   const loadAllLists = async (board_id) => {
     try {
+      dispatch({ type: "UPLOADING_REQUEST" });
       const response = await axios.get(`/board/list/all?id=${board_id}`, {
         headers: {
           token: localStorage.getItem("auth-token"),
         },
       });
       dispatch({ type: "LOAD_ALL_LISTS", payload: response.data });
+      dispatch({ type: "UPLOADING_SUCCESS" });
     } catch (error) {
+      dispatch({ type: "UPLOADING_FAILURE" });
       console.log("Error: ", error);
     }
   };
@@ -101,6 +104,7 @@ const ListDataProvider = ({ children }) => {
 
   const deleteListFromBoard = async (list_id, board_id) => {
     try {
+      dispatch({ type: "UPLOADING_REQUEST" });
       const response = await axios.post(
         "/board/list/delete",
         { list_id, board_id },
@@ -111,10 +115,12 @@ const ListDataProvider = ({ children }) => {
         }
       );
       if (response.data.success) {
+        dispatch({ type: "UPLOADING_SUCCESS" });
         dispatch({ type: "REMOVE_LIST", payload: list_id });
         showPopup("delete-list", "success", response.data.message);
       }
     } catch (error) {
+      dispatch({ type: "UPLOADING_FAILURE" });
       console.log("Error: ", error);
       showPopup(
         "delete-list",

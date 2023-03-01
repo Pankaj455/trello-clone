@@ -238,6 +238,12 @@ const listReducer = (state, action) => {
         isUploading: true,
       };
 
+    case "UPLOADING_SUCCESS":
+      return {
+        ...state,
+        isUploading: false,
+      };
+
     case "UPLOADING_FAILURE":
       return {
         ...state,
